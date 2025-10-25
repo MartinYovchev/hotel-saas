@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("NEON_NEON_DATABASE_URL")
+}
+
+// User Model - Single administrator account
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  instances    Instance[]
+
+  @@map("users")
+}
+
+// Instance Model - Each hotel/property
+model Instance {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  address       String?
+  contactEmail  String?
+  contactPhone  String?
+  timezone      String         @default("UTC")
+  currency      String         @default("USD")
+  logo          String?
+  settings      Json?          // Branding, custom labels, check-in/out times, etc.
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  roomTypes     RoomType[]
+  rooms         Room[]
+  services      Service[]
+  reservations  Reservation[]
+  customFields  CustomField[]
+  pricingRules  PricingRule[]
+
+  @@index([userId])
+  @@map("instances")
+}
+
+// Room Type Model - Define categories of rooms
+model RoomType {
+  id          String   @id @default(uuid())
+  instanceId  String
+  instance    Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  maxGuests   Int      @default(2)
+  basePrice   Decimal  @db.Decimal(10, 2)
+  amenities   Json?    // Array of amenities
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  rooms       Room[]
+
+  @@index([instanceId])
+  @@map("room_types")
+}
+
+// Room Model - Individual rooms
+model Room {
+  id           String        @id @default(uuid())
+  instanceId   String
+  instance     Instance      @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  roomNumber   String
+  roomTypeId   String
+  roomType     RoomType      @relation(fields: [roomTypeId], references: [id], onDelete: Restrict)
+  status       RoomStatus    @default(AVAILABLE)
+  floor        Int?
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+
+  @@unique([instanceId, roomNumber])
+  @@index([instanceId])
+  @@index([roomTypeId])
+  @@map("rooms")
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  CLEANING
+}
+
+// Service Model - Additional services/extras
+model Service {
+  id                 String              @id @default(uuid())
+  instanceId         String
+  instance           Instance            @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  name               String
+  description        String?
+  price              Decimal             @db.Decimal(10, 2)
+  taxRate            Decimal?            @db.Decimal(5, 2)
+  isRefundable       Boolean             @default(true)
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  reservationServices ReservationService[]
+
+  @@index([instanceId])
+  @@map("services")
+}
+
+// Reservation Model - Bookings
+model Reservation {
+  id          String               @id @default(uuid())
+  instanceId  String
+  instance    Instance             @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  roomId      String
+  room        Room                 @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  guestName   String
+  guestEmail  String?
+  guestPhone  String?
+  guestNotes  String?
+  checkIn     DateTime
+  checkOut    DateTime
+  status      ReservationStatus    @default(PENDING)
+  totalPrice  Decimal              @db.Decimal(10, 2)
+  paidAmount  Decimal              @default(0) @db.Decimal(10, 2)
+  adults      Int                  @default(1)
+  children    Int                  @default(0)
+  notes       String?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  services    ReservationService[]
+
+  @@index([instanceId])
+  @@index([roomId])
+  @@index([checkIn])
+  @@index([checkOut])
+  @@map("reservations")
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+}
+
+// Junction table for reservation services
+model ReservationService {
+  id            String      @id @default(uuid())
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  serviceId     String
+  service       Service     @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  quantity      Int         @default(1)
+  price         Decimal     @db.Decimal(10, 2)
+  createdAt     DateTime    @default(now())
+
+  @@index([reservationId])
+  @@index([serviceId])
+  @@map("reservation_services")
+}
+
+// Pricing Rule Model - Seasonal/special pricing
+model PricingRule {
+  id          String         @id @default(uuid())
+  instanceId  String
+  instance    Instance       @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  ruleType    PricingRuleType
+  startDate   DateTime?
+  endDate     DateTime?
+  daysOfWeek  Json?          // Array of day numbers (0-6)
+  adjustment  Decimal        @db.Decimal(10, 2) // Percentage or fixed amount
+  isPercentage Boolean       @default(true)
+  isActive    Boolean        @default(true)
+  priority    Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([instanceId])
+  @@map("pricing_rules")
+}
+
+enum PricingRuleType {
+  SEASONAL
+  WEEKEND
+  WEEKDAY
+  SPECIAL
+}
+
+// Custom Field Model - Per-instance customization
+model CustomField {
+  id         String           @id @default(uuid())
+  instanceId String
+  instance   Instance         @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+  entityType CustomFieldEntity
+  key        String
+  label      String
+  fieldType  CustomFieldType
+  options    Json?            // For select/multi-select fields
+  isRequired Boolean          @default(false)
+  sortOrder  Int              @default(0)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([instanceId, entityType, key])
+  @@index([instanceId])
+  @@map("custom_fields")
+}
+
+enum CustomFieldEntity {
+  ROOM
+  RESERVATION
+  GUEST
+  INSTANCE
+}
+
+enum CustomFieldType {
+  STRING
+  NUMBER
+  DATE
+  BOOLEAN
+  SELECT
+  MULTI_SELECT
+  TEXT_AREA
+}
