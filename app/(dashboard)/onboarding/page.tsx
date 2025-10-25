@@ -1,8 +1,28 @@
 import { redirect } from "next/navigation"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
 import { OnboardingForm } from "@/components/onboarding/onboarding-form"
+
+export const dynamic = 'force-dynamic'
+
+const isPreviewMode = !process.env.NEON_NEON_DATABASE_URL || process.env.NEON_DATABASE_URL?.includes("placeholder")
+
+async function getInstanceCount(userId: string) {
+  if (isPreviewMode) {
+    console.log("[v0] Preview mode - skipping instance count check")
+    return 0
+  }
+
+  try {
+    const { prisma } = await import("@/lib/prisma")
+    return await prisma.instance.count({
+      where: { userId },
+    })
+  } catch (error) {
+    console.log("[v0] Database error in onboarding:", error)
+    return 0
+  }
+}
 
 export default async function OnboardingPage() {
   const session = await getServerSession(authOptions)
@@ -12,9 +32,7 @@ export default async function OnboardingPage() {
   }
 
   // Check if user already has instances
-  const instanceCount = await prisma.instance.count({
-    where: { userId: session.user.id },
-  })
+  const instanceCount = await getInstanceCount(session.user.id)
 
   if (instanceCount > 0) {
     redirect("/dashboard")

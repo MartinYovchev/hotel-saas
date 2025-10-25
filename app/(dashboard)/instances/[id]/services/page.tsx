@@ -5,12 +5,16 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ServiceManagement } from "@/components/services/service-management"
 
+export const dynamic = 'force-dynamic'
+
 export default async function ServicesPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
   const session = await getServerSession(authOptions)
+
+  const { id } = await params
 
   if (!session?.user) {
     redirect("/login")
@@ -18,7 +22,7 @@ export default async function ServicesPage({
 
   const instance = await prisma.instance.findFirst({
     where: {
-      id: params.id,
+      id: id,
       userId: session.user.id,
     },
   })
@@ -28,12 +32,12 @@ export default async function ServicesPage({
   }
 
   const services = await prisma.service.findMany({
-    where: { instanceId: params.id },
+    where: { instanceId: id },
     orderBy: { createdAt: "asc" },
   })
 
   const pricingRules = await prisma.pricingRule.findMany({
-    where: { instanceId: params.id },
+    where: { instanceId: id },
     orderBy: { priority: "desc" },
   })
 

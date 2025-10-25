@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export default function CalendarPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
   return (
     <div className="space-y-6">
@@ -15,7 +15,7 @@ export default function CalendarPage({
       </div>
 
       <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
-        <CalendarView instanceId={params.id} />
+        <CalendarView instanceId={id} />
       </Suspense>
     </div>
   )

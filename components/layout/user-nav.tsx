@@ -1,6 +1,7 @@
 "use client"
 
-import { signOut, useSession } from "next-auth/react"
+import { signOut } from "next-auth/react"
+import type { Session } from "next-auth"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -13,9 +14,11 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { LogOut, User } from "lucide-react"
 
-export function UserNav() {
-  const { data: session } = useSession()
+interface UserNavProps {
+  session: Session
+}
 
+export function UserNav({ session }: UserNavProps) {
   if (!session?.user) {
     return null
   }

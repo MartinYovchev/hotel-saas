@@ -5,12 +5,16 @@ import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { RoomManagement } from "@/components/rooms/room-management"
 
+export const dynamic = 'force-dynamic'
+
 export default async function RoomsPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
   const session = await getServerSession(authOptions)
+
+  const { id } = await params
 
   if (!session?.user) {
     redirect("/login")
@@ -18,7 +22,7 @@ export default async function RoomsPage({
 
   const instance = await prisma.instance.findFirst({
     where: {
-      id: params.id,
+      id: id,
       userId: session.user.id,
     },
   })
@@ -28,7 +32,7 @@ export default async function RoomsPage({
   }
 
   const roomTypes = await prisma.roomType.findMany({
-    where: { instanceId: params.id },
+    where: { instanceId: id },
     include: {
       _count: {
         select: { rooms: true },
@@ -38,7 +42,7 @@ export default async function RoomsPage({
   })
 
   const rooms = await prisma.room.findMany({
-    where: { instanceId: params.id },
+    where: { instanceId: id },
     include: {
       roomType: true,
     },

@@ -5,12 +5,16 @@ import { prisma } from "@/lib/prisma"
 import { InstanceSettingsForm } from "@/components/instances/instance-settings-form"
 import { notFound } from "next/navigation"
 
+export const dynamic = 'force-dynamic'
+
 export default async function InstanceSettingsPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
   const session = await getServerSession(authOptions)
+
+  const { id } = await params
 
   if (!session?.user) {
     redirect("/login")
@@ -18,7 +22,7 @@ export default async function InstanceSettingsPage({
 
   const instance = await prisma.instance.findFirst({
     where: {
-      id: params.id,
+      id: id,
       userId: session.user.id,
     },
   })

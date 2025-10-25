@@ -16,16 +16,6 @@ export default function LoginPage() {
           <p className="mt-2 text-slate-600">Sign in to manage your properties</p>
         </div>
 
-        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-          <p className="text-sm font-medium text-blue-900">Demo Mode</p>
-          <p className="mt-1 text-sm text-blue-700">
-            Email: <span className="font-mono font-semibold">admin@demo.com</span>
-          </p>
-          <p className="text-sm text-blue-700">
-            Password: <span className="font-mono font-semibold">password</span>
-          </p>
-        </div>
-
         <div className="rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
           <LoginForm />
 

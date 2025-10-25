@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export default function ReportsPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
   return (
     <div className="space-y-6">
@@ -15,7 +15,7 @@ export default function ReportsPage({
       </div>
 
       <Suspense fallback={<Skeleton className="h-[600px] w-full" />}>
-        <ReportsView instanceId={params.id} />
+        <ReportsView instanceId={id} />
       </Suspense>
     </div>
   )

@@ -1,10 +1,53 @@
 import { redirect } from "next/navigation"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { Building2 } from "lucide-react"
 import { InstanceList } from "@/components/instances/instance-list"
 import { CreateInstanceButton } from "@/components/instances/create-instance-button"
-import { Building2 } from "lucide-react"
+
+export const dynamic = 'force-dynamic'
+
+const isPreviewMode = !process.env.NEON_NEON_DATABASE_URL || process.env.NEON_DATABASE_URL?.includes("placeholder")
+
+// Demo data for preview mode
+const DEMO_INSTANCES = [
+  {
+    id: "demo-instance-1",
+    name: "Demo Hotel",
+    address: "123 Demo Street, Demo City",
+    currency: "USD",
+    _count: {
+      rooms: 12,
+      reservations: 8,
+    },
+  },
+]
+
+async function getInstances(userId: string) {
+  if (isPreviewMode) {
+    console.log("[v0] Preview mode - using demo instances")
+    return DEMO_INSTANCES
+  }
+
+  try {
+    const { prisma } = await import("@/lib/prisma")
+    return await prisma.instance.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: {
+            rooms: true,
+            reservations: true,
+          },
+        },
+      },
+    })
+  } catch (error) {
+    console.log("[v0] Database error, using demo instances:", error)
+    return DEMO_INSTANCES
+  }
+}
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions)
@@ -13,18 +56,7 @@ export default async function DashboardPage() {
     redirect("/login")
   }
 
-  const instances = await prisma.instance.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      _count: {
-        select: {
-          rooms: true,
-          reservations: true,
-        },
-      },
-    },
-  })
+  const instances = await getInstances(session.user.id)
 
   // If no instances, redirect to onboarding
   if (instances.length === 0) {
