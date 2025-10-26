@@ -18,9 +18,11 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Loader2 } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 export function CreateInstanceButton() {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +51,7 @@ export function CreateInstanceButton() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to create property")
+        setError(errorData.error || t.onboarding.failedToCreate)
         setIsLoading(false)
         return
       }
@@ -59,7 +61,7 @@ export function CreateInstanceButton() {
       router.push(`/instances/${result.instance.id}`)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -69,27 +71,27 @@ export function CreateInstanceButton() {
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add Property
+          {t.onboarding.createProperty}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Add New Property</DialogTitle>
-          <DialogDescription>Create a new hotel or guest house to manage</DialogDescription>
+          <DialogTitle>{t.onboarding.title}</DialogTitle>
+          <DialogDescription>{t.onboarding.description}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Property Name *</Label>
-            <Input id="name" name="name" type="text" placeholder="Grand Hotel" required disabled={isLoading} />
+            <Label htmlFor="name">{t.onboarding.propertyNameRequired}</Label>
+            <Input id="name" name="name" type="text" placeholder={t.onboarding.propertyNamePlaceholder} required disabled={isLoading} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address">{t.onboarding.address}</Label>
             <Textarea
               id="address"
               name="address"
-              placeholder="123 Main Street, City, Country"
+              placeholder={t.onboarding.addressPlaceholder}
               disabled={isLoading}
               rows={2}
             />
@@ -97,25 +99,25 @@ export function CreateInstanceButton() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="contactEmail">Contact Email</Label>
+              <Label htmlFor="contactEmail">{t.onboarding.contactEmail}</Label>
               <Input
                 id="contactEmail"
                 name="contactEmail"
                 type="email"
-                placeholder="info@hotel.com"
+                placeholder={t.onboarding.contactEmailPlaceholder}
                 disabled={isLoading}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="contactPhone">Contact Phone</Label>
-              <Input id="contactPhone" name="contactPhone" type="tel" placeholder="+1234567890" disabled={isLoading} />
+              <Label htmlFor="contactPhone">{t.onboarding.contactPhone}</Label>
+              <Input id="contactPhone" name="contactPhone" type="tel" placeholder={t.onboarding.contactPhonePlaceholder} disabled={isLoading} />
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
+              <Label htmlFor="timezone">{t.common.timezone}</Label>
               <select
                 id="timezone"
                 name="timezone"
@@ -123,20 +125,21 @@ export function CreateInstanceButton() {
                 disabled={isLoading}
                 defaultValue="UTC"
               >
-                <option value="UTC">UTC</option>
-                <option value="America/New_York">Eastern Time</option>
-                <option value="America/Chicago">Central Time</option>
-                <option value="America/Denver">Mountain Time</option>
-                <option value="America/Los_Angeles">Pacific Time</option>
-                <option value="Europe/London">London</option>
-                <option value="Europe/Paris">Paris</option>
-                <option value="Asia/Tokyo">Tokyo</option>
-                <option value="Asia/Dubai">Dubai</option>
+                <option value="UTC">{t.timezones.utc}</option>
+                <option value="America/New_York">{t.timezones.easternTime}</option>
+                <option value="America/Chicago">{t.timezones.centralTime}</option>
+                <option value="America/Denver">{t.timezones.mountainTime}</option>
+                <option value="America/Los_Angeles">{t.timezones.pacificTime}</option>
+                <option value="Europe/London">{t.timezones.london}</option>
+                <option value="Europe/Paris">{t.timezones.paris}</option>
+                <option value="Asia/Tokyo">{t.timezones.tokyo}</option>
+                <option value="Asia/Dubai">{t.timezones.dubai}</option>
+                <option value="Europe/Sofia">{t.timezones.sofia}</option>
               </select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="currency">Currency</Label>
+              <Label htmlFor="currency">{t.common.currency}</Label>
               <select
                 id="currency"
                 name="currency"
@@ -144,13 +147,14 @@ export function CreateInstanceButton() {
                 disabled={isLoading}
                 defaultValue="USD"
               >
-                <option value="USD">USD - US Dollar</option>
-                <option value="EUR">EUR - Euro</option>
-                <option value="GBP">GBP - British Pound</option>
-                <option value="JPY">JPY - Japanese Yen</option>
-                <option value="AUD">AUD - Australian Dollar</option>
-                <option value="CAD">CAD - Canadian Dollar</option>
-                <option value="AED">AED - UAE Dirham</option>
+                <option value="USD">{t.currencies.usd}</option>
+                <option value="EUR">{t.currencies.eur}</option>
+                <option value="GBP">{t.currencies.gbp}</option>
+                <option value="JPY">{t.currencies.jpy}</option>
+                <option value="AUD">{t.currencies.aud}</option>
+                <option value="CAD">{t.currencies.cad}</option>
+                <option value="AED">{t.currencies.aed}</option>
+                <option value="BGN">{t.currencies.bgn}</option>
               </select>
             </div>
           </div>
@@ -163,11 +167,11 @@ export function CreateInstanceButton() {
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Property
+              {t.onboarding.createProperty}
             </Button>
           </div>
         </form>

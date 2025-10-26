@@ -9,6 +9,7 @@ import { ServiceList } from "./service-list"
 import { PricingRuleList } from "./pricing-rule-list"
 import { CreateServiceButton } from "./create-service-button"
 import { CreatePricingRuleButton } from "./create-pricing-rule-button"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface ServiceManagementProps {
   instance: {
@@ -41,6 +42,7 @@ interface ServiceManagementProps {
 
 export function ServiceManagement({ instance, services, pricingRules }: ServiceManagementProps) {
   const [activeTab, setActiveTab] = useState("services")
+  const { t } = useLanguage()
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -53,7 +55,7 @@ export function ServiceManagement({ instance, services, pricingRules }: ServiceM
               </Button>
             </Link>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-slate-900">Services & Pricing</h1>
+              <h1 className="text-3xl font-bold text-slate-900">{t.services.servicesAndPricing}</h1>
               <p className="mt-1 text-sm text-slate-600">{instance.name}</p>
             </div>
           </div>
@@ -64,8 +66,8 @@ export function ServiceManagement({ instance, services, pricingRules }: ServiceM
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="flex items-center justify-between">
             <TabsList>
-              <TabsTrigger value="services">Services</TabsTrigger>
-              <TabsTrigger value="pricing">Pricing Rules</TabsTrigger>
+              <TabsTrigger value="services">{t.services.title}</TabsTrigger>
+              <TabsTrigger value="pricing">{t.services.pricingRules}</TabsTrigger>
             </TabsList>
             {activeTab === "services" ? (
               <CreateServiceButton instanceId={instance.id} />

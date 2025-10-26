@@ -1,19 +1,24 @@
+"use client"
+
 import type { Metadata } from "next"
 import Link from "next/link"
 import { SignupForm } from "@/components/auth/signup-form"
-
-export const metadata: Metadata = {
-  title: "Sign Up | Hotel SaaS",
-  description: "Create your hotel management account",
-}
+import { LanguageSwitcher } from "@/components/ui/language-switcher"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 export default function SignupPage() {
+  const { t } = useLanguage()
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-12">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
+
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">Hotel SaaS</h1>
-          <p className="mt-2 text-slate-600">Create your account to get started</p>
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900">{t.app.title}</h1>
+          <p className="mt-2 text-slate-600">{t.auth.createAccountPrompt}</p>
         </div>
 
         <div className="rounded-lg border border-slate-200 bg-white p-8 shadow-sm">
@@ -21,15 +26,15 @@ export default function SignupPage() {
 
           <div className="mt-6 text-center text-sm">
             <p className="text-slate-600">
-              Already have an account?{" "}
+              {t.auth.alreadyHaveAccount}{" "}
               <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                Sign in
+                {t.auth.signIn}
               </Link>
             </p>
           </div>
         </div>
 
-        <p className="text-center text-xs text-slate-500">Open source hotel management platform</p>
+        <p className="text-center text-xs text-slate-500">{t.auth.openSourcePlatform}</p>
       </div>
     </div>
   )

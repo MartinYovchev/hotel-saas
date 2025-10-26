@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react"
 import { ReservationList } from "./reservation-list"
 import { CreateReservationButton } from "./create-reservation-button"
 import { ReservationFilters } from "./reservation-filters"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface ReservationManagementProps {
   instance: {
@@ -47,6 +48,7 @@ interface ReservationManagementProps {
 
 export function ReservationManagement({ instance, reservations, rooms }: ReservationManagementProps) {
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const { t } = useLanguage()
 
   const filteredReservations = reservations.filter((reservation) => {
     if (statusFilter === "all") return true
@@ -64,7 +66,7 @@ export function ReservationManagement({ instance, reservations, rooms }: Reserva
               </Button>
             </Link>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-slate-900">Reservations</h1>
+              <h1 className="text-3xl font-bold text-slate-900">{t.reservations.title}</h1>
               <p className="mt-1 text-sm text-slate-600">{instance.name}</p>
             </div>
             <CreateReservationButton instanceId={instance.id} rooms={rooms} />

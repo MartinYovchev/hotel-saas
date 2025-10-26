@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Pencil, Loader2 } from "lucide-react"
 import { format } from "date-fns"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface EditPricingRuleButtonProps {
   rule: {
@@ -38,6 +39,7 @@ interface EditPricingRuleButtonProps {
 
 export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButtonProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -69,7 +71,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to update pricing rule")
+        setError(errorData.error || t.services.failedToUpdateRule)
         setIsLoading(false)
         return
       }
@@ -77,7 +79,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
       setOpen(false)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -91,18 +93,18 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Edit Pricing Rule</DialogTitle>
-          <DialogDescription>Update pricing rule details</DialogDescription>
+          <DialogTitle>{t.services.editPricingRule}</DialogTitle>
+          <DialogDescription>{t.services.editPricingRuleDescription}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Rule Name *</Label>
+            <Label htmlFor="name">{t.services.ruleNameRequired}</Label>
             <Input id="name" name="name" defaultValue={rule.name} required disabled={isLoading} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t.services.description}</Label>
             <Textarea
               id="description"
               name="description"
@@ -114,7 +116,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="ruleType">Rule Type *</Label>
+              <Label htmlFor="ruleType">{t.services.ruleType} *</Label>
               <select
                 id="ruleType"
                 name="ruleType"
@@ -123,15 +125,15 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
                 disabled={isLoading}
                 defaultValue={rule.ruleType}
               >
-                <option value="SEASONAL">Seasonal</option>
-                <option value="WEEKEND">Weekend</option>
-                <option value="WEEKDAY">Weekday</option>
-                <option value="SPECIAL">Special</option>
+                <option value="SEASONAL">{t.services.seasonal}</option>
+                <option value="WEEKEND">{t.services.weekend}</option>
+                <option value="WEEKDAY">{t.services.weekday}</option>
+                <option value="SPECIAL">{t.services.special}</option>
               </select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority *</Label>
+              <Label htmlFor="priority">{t.services.priority} *</Label>
               <Input
                 id="priority"
                 name="priority"
@@ -146,7 +148,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">{t.services.startDate}</Label>
               <Input
                 id="startDate"
                 name="startDate"
@@ -157,7 +159,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date</Label>
+              <Label htmlFor="endDate">{t.services.endDate}</Label>
               <Input
                 id="endDate"
                 name="endDate"
@@ -170,7 +172,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="adjustment">Adjustment *</Label>
+              <Label htmlFor="adjustment">{t.services.adjustment} *</Label>
               <Input
                 id="adjustment"
                 name="adjustment"
@@ -183,7 +185,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="isPercentage">Adjustment Type *</Label>
+              <Label htmlFor="isPercentage">{t.services.adjustmentType} *</Label>
               <select
                 id="isPercentage"
                 name="isPercentage"
@@ -192,8 +194,8 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
                 disabled={isLoading}
                 defaultValue={rule.isPercentage ? "true" : "false"}
               >
-                <option value="true">Percentage (%)</option>
-                <option value="false">Fixed Amount</option>
+                <option value="true">{t.services.percentage} (%)</option>
+                <option value="false">{t.services.fixedAmount}</option>
               </select>
             </div>
           </div>
@@ -209,7 +211,7 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
               className="h-4 w-4 rounded border-slate-300"
             />
             <Label htmlFor="isActive" className="cursor-pointer">
-              Active
+              {t.services.active}
             </Label>
           </div>
 
@@ -221,11 +223,11 @@ export function EditPricingRuleButton({ rule, instanceId }: EditPricingRuleButto
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              {t.common.saveChanges}
             </Button>
           </div>
         </form>

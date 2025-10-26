@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Building2, Bed, Calendar, Settings, DollarSign } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface InstanceOverviewProps {
   instance: {
@@ -23,6 +24,8 @@ interface InstanceOverviewProps {
 }
 
 export function InstanceOverview({ instance }: InstanceOverviewProps) {
+  const { t } = useLanguage()
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="border-b border-slate-200 bg-white">
@@ -40,7 +43,7 @@ export function InstanceOverview({ instance }: InstanceOverviewProps) {
             <Link href={`/instances/${instance.id}/settings`}>
               <Button variant="outline">
                 <Settings className="mr-2 h-4 w-4" />
-                Settings
+                {t.common.settings}
               </Button>
             </Link>
           </div>
@@ -51,7 +54,7 @@ export function InstanceOverview({ instance }: InstanceOverviewProps) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Total Rooms</CardTitle>
+              <CardTitle className="text-sm font-medium text-slate-600">{t.instance.totalRooms}</CardTitle>
               <Bed className="h-4 w-4 text-slate-600" />
             </CardHeader>
             <CardContent>
@@ -60,14 +63,14 @@ export function InstanceOverview({ instance }: InstanceOverviewProps) {
                 href={`/instances/${instance.id}/rooms`}
                 className="mt-2 inline-block text-xs text-blue-600 hover:text-blue-500"
               >
-                Manage rooms →
+                {t.instance.manageRooms} →
               </Link>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Reservations</CardTitle>
+              <CardTitle className="text-sm font-medium text-slate-600">{t.instance.reservations}</CardTitle>
               <Calendar className="h-4 w-4 text-slate-600" />
             </CardHeader>
             <CardContent>
@@ -76,14 +79,14 @@ export function InstanceOverview({ instance }: InstanceOverviewProps) {
                 href={`/instances/${instance.id}/reservations`}
                 className="mt-2 inline-block text-xs text-blue-600 hover:text-blue-500"
               >
-                View bookings →
+                {t.instance.viewBookings} →
               </Link>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Services</CardTitle>
+              <CardTitle className="text-sm font-medium text-slate-600">{t.instance.services}</CardTitle>
               <DollarSign className="h-4 w-4 text-slate-600" />
             </CardHeader>
             <CardContent>
@@ -92,33 +95,33 @@ export function InstanceOverview({ instance }: InstanceOverviewProps) {
                 href={`/instances/${instance.id}/services`}
                 className="mt-2 inline-block text-xs text-blue-600 hover:text-blue-500"
               >
-                Manage services →
+                {t.instance.manageServices} →
               </Link>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Currency</CardTitle>
+              <CardTitle className="text-sm font-medium text-slate-600">{t.common.currency}</CardTitle>
               <DollarSign className="h-4 w-4 text-slate-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{instance.currency}</div>
-              <p className="mt-2 text-xs text-slate-600">Timezone: {instance.timezone}</p>
+              <p className="mt-2 text-xs text-slate-600">{t.common.timezone}: {instance.timezone}</p>
             </CardContent>
           </Card>
         </div>
 
         <div className="mt-8">
-          <h2 className="text-xl font-semibold text-slate-900">Quick Actions</h2>
+          <h2 className="text-xl font-semibold text-slate-900">{t.instance.quickActions}</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Link href={`/instances/${instance.id}/rooms`}>
               <Card className="transition-shadow hover:shadow-md">
                 <CardContent className="flex items-center gap-4 p-6">
                   <Bed className="h-8 w-8 text-blue-600" />
                   <div>
-                    <h3 className="font-semibold">Manage Rooms</h3>
-                    <p className="text-sm text-slate-600">Add and configure rooms</p>
+                    <h3 className="font-semibold">{t.instance.manageRooms}</h3>
+                    <p className="text-sm text-slate-600">{t.instance.manageRoomsDescription}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -129,8 +132,8 @@ export function InstanceOverview({ instance }: InstanceOverviewProps) {
                 <CardContent className="flex items-center gap-4 p-6">
                   <Calendar className="h-8 w-8 text-blue-600" />
                   <div>
-                    <h3 className="font-semibold">Reservations</h3>
-                    <p className="text-sm text-slate-600">View and manage bookings</p>
+                    <h3 className="font-semibold">{t.instance.reservations}</h3>
+                    <p className="text-sm text-slate-600">{t.instance.viewAndManageBookings}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -141,8 +144,8 @@ export function InstanceOverview({ instance }: InstanceOverviewProps) {
                 <CardContent className="flex items-center gap-4 p-6">
                   <Settings className="h-8 w-8 text-blue-600" />
                   <div>
-                    <h3 className="font-semibold">Settings</h3>
-                    <p className="text-sm text-slate-600">Configure property details</p>
+                    <h3 className="font-semibold">{t.common.settings}</h3>
+                    <p className="text-sm text-slate-600">{t.instance.configurePropertyDetails}</p>
                   </div>
                 </CardContent>
               </Card>

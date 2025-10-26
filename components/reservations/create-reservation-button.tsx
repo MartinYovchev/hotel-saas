@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Loader2 } from "lucide-react"
 import { differenceInDays } from "date-fns"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface CreateReservationButtonProps {
   instanceId: string
@@ -36,6 +37,7 @@ interface CreateReservationButtonProps {
 
 export function CreateReservationButton({ instanceId, rooms }: CreateReservationButtonProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -93,7 +95,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to create reservation")
+        setError(errorData.error || t.reservations.failedToCreate)
         setIsLoading(false)
         return
       }
@@ -105,7 +107,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
       setCalculatedPrice(0)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
     } finally {
       setIsLoading(false)
     }
@@ -115,7 +117,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
     return (
       <Button disabled>
         <Plus className="mr-2 h-4 w-4" />
-        New Reservation
+        {t.reservations.createReservation}
       </Button>
     )
   }
@@ -125,41 +127,41 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          New Reservation
+          {t.reservations.createReservation}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create Reservation</DialogTitle>
-          <DialogDescription>Add a new booking for your property</DialogDescription>
+          <DialogTitle>{t.reservations.createReservation}</DialogTitle>
+          <DialogDescription>{t.reservations.noReservationsDescription}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="guestName">Guest Name *</Label>
-            <Input id="guestName" name="guestName" placeholder="John Doe" required disabled={isLoading} />
+            <Label htmlFor="guestName">{t.reservations.guestNameRequired}</Label>
+            <Input id="guestName" name="guestName" placeholder={t.reservations.guestNamePlaceholder} required disabled={isLoading} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="guestEmail">Guest Email</Label>
+              <Label htmlFor="guestEmail">{t.reservations.guestEmail}</Label>
               <Input
                 id="guestEmail"
                 name="guestEmail"
                 type="email"
-                placeholder="john@example.com"
+                placeholder={t.reservations.guestEmailPlaceholder}
                 disabled={isLoading}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="guestPhone">Guest Phone</Label>
-              <Input id="guestPhone" name="guestPhone" type="tel" placeholder="+1234567890" disabled={isLoading} />
+              <Label htmlFor="guestPhone">{t.reservations.guestPhone}</Label>
+              <Input id="guestPhone" name="guestPhone" type="tel" placeholder={t.reservations.guestPhonePlaceholder} disabled={isLoading} />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="roomId">Room *</Label>
+            <Label htmlFor="roomId">{t.reservations.room} *</Label>
             <select
               id="roomId"
               name="roomId"
@@ -169,10 +171,10 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
               value={selectedRoom}
               onChange={(e) => setSelectedRoom(e.target.value)}
             >
-              <option value="">Select a room</option>
+              <option value="">{t.reservations.selectRoom}</option>
               {availableRooms.map((room) => (
                 <option key={room.id} value={room.id}>
-                  Room {room.roomNumber} - {room.roomType.name} ($
+                  {t.rooms.roomNumber} {room.roomNumber} - {room.roomType.name} ($
                   {Number(room.roomType.basePrice).toFixed(2)}/night)
                 </option>
               ))}
@@ -181,7 +183,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="checkIn">Check-In Date *</Label>
+              <Label htmlFor="checkIn">{t.reservations.checkInDate} *</Label>
               <Input
                 id="checkIn"
                 name="checkIn"
@@ -194,7 +196,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="checkOut">Check-Out Date *</Label>
+              <Label htmlFor="checkOut">{t.reservations.checkOutDate} *</Label>
               <Input
                 id="checkOut"
                 name="checkOut"
@@ -209,7 +211,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="adults">Adults *</Label>
+              <Label htmlFor="adults">{t.reservations.guestName.split(' ')[0]} *</Label>
               <Input id="adults" name="adults" type="number" min="1" defaultValue="1" required disabled={isLoading} />
             </div>
 
@@ -222,21 +224,21 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
           {calculatedPrice > 0 && (
             <div className="rounded-lg bg-blue-50 p-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-blue-900">Total Price</span>
+                <span className="text-sm font-medium text-blue-900">{t.reservations.totalPrice}</span>
                 <span className="text-lg font-bold text-blue-900">${calculatedPrice.toFixed(2)}</span>
               </div>
               <p className="mt-1 text-xs text-blue-700">
-                {checkIn && checkOut ? `${differenceInDays(new Date(checkOut), new Date(checkIn))} night(s)` : ""}
+                {checkIn && checkOut ? `${differenceInDays(new Date(checkOut), new Date(checkIn))} ${t.reservations.nights.toLowerCase()}` : ""}
               </p>
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes">{t.reservations.notes}</Label>
             <Textarea
               id="notes"
               name="notes"
-              placeholder="Special requests or additional information"
+              placeholder={t.reservations.notesPlaceholder}
               disabled={isLoading}
               rows={3}
             />
@@ -250,11 +252,11 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button type="submit" disabled={isLoading || calculatedPrice === 0}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Reservation
+              {t.reservations.createReservation}
             </Button>
           </div>
         </form>

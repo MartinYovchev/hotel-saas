@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bed } from "lucide-react"
 import { EditRoomButton } from "./edit-room-button"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface RoomListProps {
   rooms: Array<{
@@ -28,12 +29,27 @@ const statusColors = {
 }
 
 export function RoomList({ rooms, instanceId }: RoomListProps) {
+  const { t } = useLanguage()
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "AVAILABLE":
+        return t.rooms.available
+      case "OCCUPIED":
+        return t.rooms.occupied
+      case "MAINTENANCE":
+        return t.rooms.maintenance
+      default:
+        return status
+    }
+  }
+
   if (rooms.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white py-12">
         <Bed className="h-12 w-12 text-slate-400" />
-        <h3 className="mt-4 text-lg font-semibold text-slate-900">No rooms yet</h3>
-        <p className="mt-2 text-sm text-slate-600">Add your first room to get started</p>
+        <h3 className="mt-4 text-lg font-semibold text-slate-900">{t.rooms.noRooms}</h3>
+        <p className="mt-2 text-sm text-slate-600">{t.rooms.createRoomDescription}</p>
       </div>
     )
   }
@@ -49,7 +65,7 @@ export function RoomList({ rooms, instanceId }: RoomListProps) {
                   <Bed className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-slate-900">Room {room.roomNumber}</h3>
+                  <h3 className="font-semibold text-slate-900">{t.rooms.roomNumber} {room.roomNumber}</h3>
                   <p className="text-sm text-slate-600">{room.roomType.name}</p>
                 </div>
               </div>
@@ -60,11 +76,11 @@ export function RoomList({ rooms, instanceId }: RoomListProps) {
               <Badge
                 className={statusColors[room.status as keyof typeof statusColors] || "bg-slate-100 text-slate-800"}
               >
-                {room.status}
+                {getStatusText(room.status)}
               </Badge>
-              {room.floor !== null && <p className="text-sm text-slate-600">Floor {room.floor}</p>}
+              {room.floor !== null && <p className="text-sm text-slate-600">{t.rooms.floor} {room.floor}</p>}
               <p className="text-sm font-semibold text-slate-900">
-                ${Number(room.roomType.basePrice).toFixed(2)}/night
+                ${Number(room.roomType.basePrice).toFixed(2)}/{t.rooms.basePrice.split(' (')[0].toLowerCase()}
               </p>
             </div>
           </CardContent>

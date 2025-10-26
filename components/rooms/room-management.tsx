@@ -9,6 +9,7 @@ import { RoomTypeList } from "./room-type-list"
 import { RoomList } from "./room-list"
 import { CreateRoomTypeButton } from "./create-room-type-button"
 import { CreateRoomButton } from "./create-room-button"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface RoomManagementProps {
   instance: {
@@ -41,6 +42,7 @@ interface RoomManagementProps {
 
 export function RoomManagement({ instance, roomTypes, rooms }: RoomManagementProps) {
   const [activeTab, setActiveTab] = useState("types")
+  const { t } = useLanguage()
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -53,7 +55,7 @@ export function RoomManagement({ instance, roomTypes, rooms }: RoomManagementPro
               </Button>
             </Link>
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-slate-900">Room Management</h1>
+              <h1 className="text-3xl font-bold text-slate-900">{t.rooms.roomManagement}</h1>
               <p className="mt-1 text-sm text-slate-600">{instance.name}</p>
             </div>
           </div>
@@ -64,8 +66,8 @@ export function RoomManagement({ instance, roomTypes, rooms }: RoomManagementPro
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="flex items-center justify-between">
             <TabsList>
-              <TabsTrigger value="types">Room Types</TabsTrigger>
-              <TabsTrigger value="rooms">Rooms</TabsTrigger>
+              <TabsTrigger value="types">{t.rooms.roomTypes}</TabsTrigger>
+              <TabsTrigger value="rooms">{t.rooms.rooms}</TabsTrigger>
             </TabsList>
             {activeTab === "types" ? (
               <CreateRoomTypeButton instanceId={instance.id} />

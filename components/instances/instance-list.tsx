@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Building2, Bed, Calendar } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface Instance {
   id: string
@@ -20,6 +21,8 @@ interface InstanceListProps {
 }
 
 export function InstanceList({ instances }: InstanceListProps) {
+  const { t } = useLanguage()
+
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {instances.map((instance) => (
@@ -42,11 +45,11 @@ export function InstanceList({ instances }: InstanceListProps) {
               <div className="flex items-center gap-6 text-sm text-slate-600">
                 <div className="flex items-center gap-2">
                   <Bed className="h-4 w-4" />
-                  <span>{instance._count.rooms} rooms</span>
+                  <span>{instance._count.rooms} {t.rooms.rooms.toLowerCase()}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>{instance._count.reservations} bookings</span>
+                  <span>{instance._count.reservations} {t.instance.reservations.toLowerCase()}</span>
                 </div>
               </div>
             </CardContent>

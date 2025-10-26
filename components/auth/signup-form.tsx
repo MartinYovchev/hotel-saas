@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 export function SignupForm() {
   const router = useRouter()
+  const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -27,13 +29,13 @@ export function SignupForm() {
     const confirmPassword = formData.get("confirmPassword") as string
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      setError(t.auth.passwordMismatch)
       setIsLoading(false)
       return
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters")
+      setError(t.auth.passwordTooShort)
       setIsLoading(false)
       return
     }
@@ -48,7 +50,7 @@ export function SignupForm() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error || "Failed to create account")
+        setError(data.error || t.auth.failedToCreateAccount)
         setIsLoading(false)
         return
       }
@@ -56,7 +58,7 @@ export function SignupForm() {
       // Redirect to login after successful signup
       router.push("/login?registered=true")
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -65,12 +67,12 @@ export function SignupForm() {
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name">{t.auth.fullName}</Label>
           <Input
             id="name"
             name="name"
             type="text"
-            placeholder="John Doe"
+            placeholder={t.auth.namePlaceholder}
             required
             autoComplete="name"
             disabled={isLoading}
@@ -78,12 +80,12 @@ export function SignupForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t.auth.email}</Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder={t.auth.emailPlaceholder}
             required
             autoComplete="email"
             disabled={isLoading}
@@ -91,27 +93,27 @@ export function SignupForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password">{t.auth.password}</Label>
           <Input
             id="password"
             name="password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t.auth.passwordPlaceholder}
             required
             autoComplete="new-password"
             disabled={isLoading}
             minLength={8}
           />
-          <p className="text-xs text-slate-500">Must be at least 8 characters</p>
+          <p className="text-xs text-slate-500">{t.auth.passwordRequirement}</p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword">{t.auth.confirmPassword}</Label>
           <Input
             id="confirmPassword"
             name="confirmPassword"
             type="password"
-            placeholder="••••••••"
+            placeholder={t.auth.passwordPlaceholder}
             required
             autoComplete="new-password"
             disabled={isLoading}
@@ -128,7 +130,7 @@ export function SignupForm() {
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Create account
+        {t.auth.createAccount}
       </Button>
     </form>
   )

@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Pencil, Loader2, X } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface EditRoomTypeButtonProps {
   roomType: {
@@ -33,6 +34,7 @@ interface EditRoomTypeButtonProps {
 
 export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -73,7 +75,7 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to update room type")
+        setError(errorData.error || t.rooms.failedToUpdateRoomType)
         setIsLoading(false)
         return
       }
@@ -81,7 +83,7 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
       setOpen(false)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -95,18 +97,18 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Edit Room Type</DialogTitle>
-          <DialogDescription>Update room type details and pricing</DialogDescription>
+          <DialogTitle>{t.rooms.editRoomType}</DialogTitle>
+          <DialogDescription>{t.rooms.editRoomTypeDescription}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Room Type Name *</Label>
+            <Label htmlFor="name">{t.rooms.roomTypeNameRequired}</Label>
             <Input id="name" name="name" defaultValue={roomType.name} required disabled={isLoading} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t.rooms.description}</Label>
             <Textarea
               id="description"
               name="description"
@@ -118,7 +120,7 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="maxGuests">Max Guests *</Label>
+              <Label htmlFor="maxGuests">{t.rooms.maxGuestsRequired}</Label>
               <Input
                 id="maxGuests"
                 name="maxGuests"
@@ -131,7 +133,7 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="basePrice">Base Price (per night) *</Label>
+              <Label htmlFor="basePrice">{t.rooms.basePriceRequired}</Label>
               <Input
                 id="basePrice"
                 name="basePrice"
@@ -146,13 +148,13 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="amenity">Amenities</Label>
+            <Label htmlFor="amenity">{t.rooms.amenities}</Label>
             <div className="flex gap-2">
               <Input
                 id="amenity"
                 value={amenityInput}
                 onChange={(e) => setAmenityInput(e.target.value)}
-                placeholder="Add amenity..."
+                placeholder={t.rooms.addAmenityPlaceholder}
                 disabled={isLoading}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -162,7 +164,7 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
                 }}
               />
               <Button type="button" variant="outline" onClick={addAmenity} disabled={isLoading}>
-                Add
+                {t.common.add}
               </Button>
             </div>
             {amenities.length > 0 && (
@@ -191,11 +193,11 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              {t.common.saveChanges}
             </Button>
           </div>
         </form>

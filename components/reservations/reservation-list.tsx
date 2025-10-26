@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, User, Bed } from "lucide-react"
 import { EditReservationButton } from "./edit-reservation-button"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface ReservationListProps {
   reservations: Array<{
@@ -39,12 +40,31 @@ const statusColors = {
 }
 
 export function ReservationList({ reservations, instanceId, currency }: ReservationListProps) {
+  const { t } = useLanguage()
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "PENDING":
+        return t.reservations.pending
+      case "CONFIRMED":
+        return t.reservations.confirmed
+      case "CHECKED_IN":
+        return t.reservations.checkedIn
+      case "CHECKED_OUT":
+        return t.reservations.checkedOut
+      case "CANCELLED":
+        return t.reservations.cancelled
+      default:
+        return status.replace("_", " ")
+    }
+  }
+
   if (reservations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white py-12">
         <Calendar className="h-12 w-12 text-slate-400" />
-        <h3 className="mt-4 text-lg font-semibold text-slate-900">No reservations found</h3>
-        <p className="mt-2 text-sm text-slate-600">Create your first reservation to get started</p>
+        <h3 className="mt-4 text-lg font-semibold text-slate-900">{t.reservations.noReservations}</h3>
+        <p className="mt-2 text-sm text-slate-600">{t.reservations.noReservationsDescription}</p>
       </div>
     )
   }
@@ -65,7 +85,7 @@ export function ReservationList({ reservations, instanceId, currency }: Reservat
                           statusColors[reservation.status as keyof typeof statusColors] || "bg-slate-100 text-slate-800"
                         }
                       >
-                        {reservation.status.replace("_", " ")}
+                        {getStatusText(reservation.status)}
                       </Badge>
                     </div>
                     {reservation.guestEmail && <p className="mt-1 text-sm text-slate-600">{reservation.guestEmail}</p>}
@@ -78,7 +98,7 @@ export function ReservationList({ reservations, instanceId, currency }: Reservat
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Bed className="h-4 w-4" />
                     <span>
-                      Room {reservation.room.roomNumber} - {reservation.room.roomType.name}
+                      {t.rooms.roomNumber} {reservation.room.roomNumber} - {reservation.room.roomType.name}
                     </span>
                   </div>
 
@@ -101,7 +121,7 @@ export function ReservationList({ reservations, instanceId, currency }: Reservat
                 </div>
 
                 <div className="flex items-center justify-between border-t border-slate-200 pt-3">
-                  <span className="text-sm text-slate-600">Total Price</span>
+                  <span className="text-sm text-slate-600">{t.reservations.totalPrice}</span>
                   <span className="text-lg font-semibold text-slate-900">
                     {currency} {Number(reservation.totalPrice).toFixed(2)}
                   </span>

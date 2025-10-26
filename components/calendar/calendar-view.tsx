@@ -16,6 +16,7 @@ import {
   startOfWeek,
   endOfWeek,
 } from "date-fns"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface Reservation {
   id: string
@@ -29,6 +30,7 @@ interface Reservation {
 }
 
 export function CalendarView({ instanceId }: { instanceId: string }) {
+  const { t } = useLanguage()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [loading, setLoading] = useState(true)
@@ -93,7 +95,7 @@ export function CalendarView({ instanceId }: { instanceId: string }) {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button variant="outline" onClick={() => setCurrentDate(new Date())}>
-              Today
+              {t.calendar.today}
             </Button>
             <Button variant="outline" size="icon" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
               <ChevronRight className="h-4 w-4" />
@@ -103,7 +105,7 @@ export function CalendarView({ instanceId }: { instanceId: string }) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-7 gap-2">
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          {[t.calendar.sun, t.calendar.mon, t.calendar.tue, t.calendar.wed, t.calendar.thu, t.calendar.fri, t.calendar.sat].map((day) => (
             <div key={day} className="p-2 text-center text-sm font-semibold text-muted-foreground">
               {day}
             </div>
@@ -131,7 +133,7 @@ export function CalendarView({ instanceId }: { instanceId: string }) {
                     </div>
                   ))}
                   {dayReservations.length > 3 && (
-                    <div className="text-xs text-muted-foreground">+{dayReservations.length - 3} more</div>
+                    <div className="text-xs text-muted-foreground">+{dayReservations.length - 3} {t.calendar.more}</div>
                   )}
                 </div>
               </div>
@@ -141,23 +143,23 @@ export function CalendarView({ instanceId }: { instanceId: string }) {
         <div className="mt-4 flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-green-500" />
-            <span className="text-sm">Confirmed</span>
+            <span className="text-sm">{t.reservations.confirmed}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-yellow-500" />
-            <span className="text-sm">Pending</span>
+            <span className="text-sm">{t.reservations.pending}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-blue-500" />
-            <span className="text-sm">Checked In</span>
+            <span className="text-sm">{t.reservations.checkedIn}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-gray-500" />
-            <span className="text-sm">Checked Out</span>
+            <span className="text-sm">{t.reservations.checkedOut}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full bg-red-500" />
-            <span className="text-sm">Cancelled</span>
+            <span className="text-sm">{t.reservations.cancelled}</span>
           </div>
         </div>
       </CardContent>

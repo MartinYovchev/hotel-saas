@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { MoreVertical, Pencil, Loader2 } from "lucide-react"
 import { format } from "date-fns"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface EditReservationButtonProps {
   reservation: {
@@ -31,6 +32,7 @@ interface EditReservationButtonProps {
 
 export function EditReservationButton({ reservation, instanceId }: EditReservationButtonProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -59,7 +61,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to update reservation")
+        setError(errorData.error || t.reservations.failedToUpdate)
         setIsLoading(false)
         return
       }
@@ -67,7 +69,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
       setOpen(false)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -83,7 +85,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
-            Edit
+            {t.common.edit}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -91,13 +93,13 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Edit Reservation</DialogTitle>
-            <DialogDescription>Update reservation details and status</DialogDescription>
+            <DialogTitle>{t.reservations.editReservation}</DialogTitle>
+            <DialogDescription>{t.reservations.editReservationDescription}</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={onSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="guestName">Guest Name *</Label>
+              <Label htmlFor="guestName">{t.reservations.guestNameRequired}</Label>
               <Input
                 id="guestName"
                 name="guestName"
@@ -109,7 +111,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="guestEmail">Guest Email</Label>
+                <Label htmlFor="guestEmail">{t.reservations.guestEmail}</Label>
                 <Input
                   id="guestEmail"
                   name="guestEmail"
@@ -120,7 +122,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="guestPhone">Guest Phone</Label>
+                <Label htmlFor="guestPhone">{t.reservations.guestPhone}</Label>
                 <Input
                   id="guestPhone"
                   name="guestPhone"
@@ -133,19 +135,19 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>Check-In Date</Label>
+                <Label>{t.reservations.checkInDate}</Label>
                 <Input value={format(new Date(reservation.checkIn), "MMM dd, yyyy")} disabled />
               </div>
 
               <div className="space-y-2">
-                <Label>Check-Out Date</Label>
+                <Label>{t.reservations.checkOutDate}</Label>
                 <Input value={format(new Date(reservation.checkOut), "MMM dd, yyyy")} disabled />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="adults">Adults *</Label>
+                <Label htmlFor="adults">{t.reservations.adults} *</Label>
                 <Input
                   id="adults"
                   name="adults"
@@ -158,7 +160,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="children">Children</Label>
+                <Label htmlFor="children">{t.reservations.children}</Label>
                 <Input
                   id="children"
                   name="children"
@@ -171,7 +173,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Status *</Label>
+              <Label htmlFor="status">{t.reservations.status} *</Label>
               <select
                 id="status"
                 name="status"
@@ -180,11 +182,11 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
                 disabled={isLoading}
                 defaultValue={reservation.status}
               >
-                <option value="PENDING">Pending</option>
-                <option value="CONFIRMED">Confirmed</option>
-                <option value="CHECKED_IN">Checked In</option>
-                <option value="CHECKED_OUT">Checked Out</option>
-                <option value="CANCELLED">Cancelled</option>
+                <option value="PENDING">{t.reservations.pending}</option>
+                <option value="CONFIRMED">{t.reservations.confirmed}</option>
+                <option value="CHECKED_IN">{t.reservations.checkedIn}</option>
+                <option value="CHECKED_OUT">{t.reservations.checkedOut}</option>
+                <option value="CANCELLED">{t.reservations.cancelled}</option>
               </select>
             </div>
 
@@ -196,11 +198,11 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
 
             <div className="flex justify-end gap-3">
               <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-                Cancel
+                {t.common.cancel}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Changes
+                {t.common.saveChanges}
               </Button>
             </div>
           </form>

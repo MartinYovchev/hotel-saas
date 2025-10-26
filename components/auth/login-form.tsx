@@ -11,9 +11,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 export function LoginForm() {
   const router = useRouter()
+  const { t } = useLanguage()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -34,7 +36,7 @@ export function LoginForm() {
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
+        setError(t.auth.invalidCredentials)
         setIsLoading(false)
         return
       }
@@ -42,7 +44,7 @@ export function LoginForm() {
       router.push("/dashboard")
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -51,12 +53,12 @@ export function LoginForm() {
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t.auth.email}</Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder={t.auth.emailPlaceholder}
             required
             autoComplete="email"
             disabled={isLoading}
@@ -65,16 +67,16 @@ export function LoginForm() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t.auth.password}</Label>
             <Link href="/forgot-password" className="text-sm font-medium text-blue-600 hover:text-blue-500">
-              Forgot password?
+              {t.auth.forgotPassword}
             </Link>
           </div>
           <Input
             id="password"
             name="password"
             type="password"
-            placeholder="••••••••"
+            placeholder={t.auth.passwordPlaceholder}
             required
             autoComplete="current-password"
             disabled={isLoading}
@@ -90,7 +92,7 @@ export function LoginForm() {
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Sign in
+        {t.auth.signIn}
       </Button>
     </form>
   )

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { MoreVertical, Pencil, Loader2 } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface EditRoomButtonProps {
   room: {
@@ -28,6 +29,7 @@ interface EditRoomButtonProps {
 
 export function EditRoomButton({ room, instanceId }: EditRoomButtonProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -53,7 +55,7 @@ export function EditRoomButton({ room, instanceId }: EditRoomButtonProps) {
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to update room")
+        setError(errorData.error || t.rooms.failedToUpdateRoom)
         setIsLoading(false)
         return
       }
@@ -61,7 +63,7 @@ export function EditRoomButton({ room, instanceId }: EditRoomButtonProps) {
       setOpen(false)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -77,7 +79,7 @@ export function EditRoomButton({ room, instanceId }: EditRoomButtonProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Pencil className="mr-2 h-4 w-4" />
-            Edit
+            {t.common.edit}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -85,29 +87,29 @@ export function EditRoomButton({ room, instanceId }: EditRoomButtonProps) {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Room</DialogTitle>
-            <DialogDescription>Update room details and status</DialogDescription>
+            <DialogTitle>{t.rooms.editRoom}</DialogTitle>
+            <DialogDescription>{t.rooms.editRoomDescription}</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={onSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="roomNumber">Room Number *</Label>
+              <Label htmlFor="roomNumber">{t.rooms.roomNumberRequired}</Label>
               <Input id="roomNumber" name="roomNumber" defaultValue={room.roomNumber} required disabled={isLoading} />
             </div>
 
             <div className="space-y-2">
-              <Label>Room Type</Label>
+              <Label>{t.rooms.roomType}</Label>
               <Input value={room.roomType.name} disabled />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="floor">Floor</Label>
+                <Label htmlFor="floor">{t.rooms.floor}</Label>
                 <Input id="floor" name="floor" type="number" defaultValue={room.floor || ""} disabled={isLoading} />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="status">Status *</Label>
+                <Label htmlFor="status">{t.rooms.status} *</Label>
                 <select
                   id="status"
                   name="status"
@@ -116,10 +118,10 @@ export function EditRoomButton({ room, instanceId }: EditRoomButtonProps) {
                   disabled={isLoading}
                   defaultValue={room.status}
                 >
-                  <option value="AVAILABLE">Available</option>
-                  <option value="OCCUPIED">Occupied</option>
-                  <option value="MAINTENANCE">Maintenance</option>
-                  <option value="CLEANING">Cleaning</option>
+                  <option value="AVAILABLE">{t.rooms.available}</option>
+                  <option value="OCCUPIED">{t.rooms.occupied}</option>
+                  <option value="MAINTENANCE">{t.rooms.maintenance}</option>
+                  <option value="CLEANING">{t.rooms.cleaning}</option>
                 </select>
               </div>
             </div>
@@ -132,11 +134,11 @@ export function EditRoomButton({ room, instanceId }: EditRoomButtonProps) {
 
             <div className="flex justify-end gap-3">
               <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-                Cancel
+                {t.common.cancel}
               </Button>
               <Button type="submit" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Save Changes
+                {t.common.saveChanges}
               </Button>
             </div>
           </form>

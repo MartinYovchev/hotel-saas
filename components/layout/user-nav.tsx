@@ -13,12 +13,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { LogOut, User } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface UserNavProps {
   session: Session
 }
 
 export function UserNav({ session }: UserNavProps) {
+  const { t } = useLanguage()
+
   if (!session?.user) {
     return null
   }
@@ -53,7 +56,7 @@ export function UserNav({ session }: UserNavProps) {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => signOut()}>
           <LogOut className="mr-2 h-4 w-4" />
-          Log out
+          {t.auth.signOut}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

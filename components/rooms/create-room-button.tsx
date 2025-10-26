@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Loader2 } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface CreateRoomButtonProps {
   instanceId: string
@@ -28,6 +29,7 @@ interface CreateRoomButtonProps {
 
 export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -54,7 +56,7 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to create room")
+        setError(errorData.error || t.rooms.failedToCreateRoom)
         setIsLoading(false)
         return
       }
@@ -62,7 +64,7 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
       setOpen(false)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -71,7 +73,7 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
     return (
       <Button disabled>
         <Plus className="mr-2 h-4 w-4" />
-        Add Room
+        {t.rooms.addRoom}
       </Button>
     )
   }
@@ -81,23 +83,23 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add Room
+          {t.rooms.addRoom}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Room</DialogTitle>
-          <DialogDescription>Create a new room in your property</DialogDescription>
+          <DialogTitle>{t.rooms.createRoom}</DialogTitle>
+          <DialogDescription>{t.rooms.createRoomDescription}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="roomNumber">Room Number *</Label>
-            <Input id="roomNumber" name="roomNumber" placeholder="101" required disabled={isLoading} />
+            <Label htmlFor="roomNumber">{t.rooms.roomNumberRequired}</Label>
+            <Input id="roomNumber" name="roomNumber" placeholder={t.rooms.roomNumberPlaceholder} required disabled={isLoading} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="roomTypeId">Room Type *</Label>
+            <Label htmlFor="roomTypeId">{t.rooms.roomType} *</Label>
             <select
               id="roomTypeId"
               name="roomTypeId"
@@ -105,7 +107,7 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
               required
               disabled={isLoading}
             >
-              <option value="">Select a room type</option>
+              <option value="">{t.rooms.selectRoomType}</option>
               {roomTypes.map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}
@@ -116,12 +118,12 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="floor">Floor</Label>
-              <Input id="floor" name="floor" type="number" placeholder="1" disabled={isLoading} />
+              <Label htmlFor="floor">{t.rooms.floor}</Label>
+              <Input id="floor" name="floor" type="number" placeholder={t.rooms.floorPlaceholder} disabled={isLoading} />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Status *</Label>
+              <Label htmlFor="status">{t.rooms.status} *</Label>
               <select
                 id="status"
                 name="status"
@@ -130,9 +132,9 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
                 disabled={isLoading}
                 defaultValue="AVAILABLE"
               >
-                <option value="AVAILABLE">Available</option>
-                <option value="OCCUPIED">Occupied</option>
-                <option value="MAINTENANCE">Maintenance</option>
+                <option value="AVAILABLE">{t.rooms.available}</option>
+                <option value="OCCUPIED">{t.rooms.occupied}</option>
+                <option value="MAINTENANCE">{t.rooms.maintenance}</option>
                 <option value="CLEANING">Cleaning</option>
               </select>
             </div>
@@ -146,11 +148,11 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Room
+              {t.rooms.createRoom}
             </Button>
           </div>
         </form>

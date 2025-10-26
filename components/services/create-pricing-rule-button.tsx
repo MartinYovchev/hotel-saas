@@ -18,9 +18,11 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Loader2 } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -52,7 +54,7 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to create pricing rule")
+        setError(errorData.error || t.services.failedToCreateRule)
         setIsLoading(false)
         return
       }
@@ -60,7 +62,7 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
       setOpen(false)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -70,27 +72,27 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Add Pricing Rule
+          {t.services.addPricingRule}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Create Pricing Rule</DialogTitle>
-          <DialogDescription>Define seasonal rates, weekend pricing, or special offers</DialogDescription>
+          <DialogTitle>{t.services.createPricingRule}</DialogTitle>
+          <DialogDescription>{t.services.createPricingRuleDescription}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Rule Name *</Label>
-            <Input id="name" name="name" placeholder="Summer Season" required disabled={isLoading} />
+            <Label htmlFor="name">{t.services.ruleNameRequired}</Label>
+            <Input id="name" name="name" placeholder={t.services.ruleNamePlaceholder} required disabled={isLoading} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t.services.description}</Label>
             <Textarea
               id="description"
               name="description"
-              placeholder="Higher rates during peak summer months"
+              placeholder={t.services.descriptionPlaceholder}
               disabled={isLoading}
               rows={2}
             />
@@ -98,7 +100,7 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="ruleType">Rule Type *</Label>
+              <Label htmlFor="ruleType">{t.services.ruleType} *</Label>
               <select
                 id="ruleType"
                 name="ruleType"
@@ -106,15 +108,15 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
                 required
                 disabled={isLoading}
               >
-                <option value="SEASONAL">Seasonal</option>
-                <option value="WEEKEND">Weekend</option>
-                <option value="WEEKDAY">Weekday</option>
-                <option value="SPECIAL">Special</option>
+                <option value="SEASONAL">{t.services.seasonal}</option>
+                <option value="WEEKEND">{t.services.weekend}</option>
+                <option value="WEEKDAY">{t.services.weekday}</option>
+                <option value="SPECIAL">{t.services.special}</option>
               </select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority *</Label>
+              <Label htmlFor="priority">{t.services.priority} *</Label>
               <Input
                 id="priority"
                 name="priority"
@@ -124,39 +126,39 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
                 required
                 disabled={isLoading}
               />
-              <p className="text-xs text-slate-500">Higher priority rules are applied first</p>
+              <p className="text-xs text-slate-500">{t.services.priorityDescription}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
+              <Label htmlFor="startDate">{t.services.startDate}</Label>
               <Input id="startDate" name="startDate" type="date" disabled={isLoading} />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="endDate">End Date</Label>
+              <Label htmlFor="endDate">{t.services.endDate}</Label>
               <Input id="endDate" name="endDate" type="date" disabled={isLoading} />
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="adjustment">Adjustment *</Label>
+              <Label htmlFor="adjustment">{t.services.adjustment} *</Label>
               <Input
                 id="adjustment"
                 name="adjustment"
                 type="number"
                 step="0.01"
-                placeholder="20.00"
+                placeholder={t.services.adjustmentPlaceholder}
                 required
                 disabled={isLoading}
               />
-              <p className="text-xs text-slate-500">Use positive for increase, negative for discount</p>
+              <p className="text-xs text-slate-500">{t.services.adjustmentNote}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="isPercentage">Adjustment Type *</Label>
+              <Label htmlFor="isPercentage">{t.services.adjustmentType} *</Label>
               <select
                 id="isPercentage"
                 name="isPercentage"
@@ -165,8 +167,8 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
                 disabled={isLoading}
                 defaultValue="true"
               >
-                <option value="true">Percentage (%)</option>
-                <option value="false">Fixed Amount</option>
+                <option value="true">{t.services.percentage} (%)</option>
+                <option value="false">{t.services.fixedAmount}</option>
               </select>
             </div>
           </div>
@@ -182,7 +184,7 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
               className="h-4 w-4 rounded border-slate-300"
             />
             <Label htmlFor="isActive" className="cursor-pointer">
-              Active
+              {t.services.active}
             </Label>
           </div>
 
@@ -194,11 +196,11 @@ export function CreatePricingRuleButton({ instanceId }: { instanceId: string }) 
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Rule
+              {t.services.createPricingRule}
             </Button>
           </div>
         </form>

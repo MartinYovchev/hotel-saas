@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { DollarSign } from "lucide-react"
 import { EditServiceButton } from "./edit-service-button"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface ServiceListProps {
   services: Array<{
@@ -20,12 +21,14 @@ interface ServiceListProps {
 }
 
 export function ServiceList({ services, instanceId, currency }: ServiceListProps) {
+  const { t } = useLanguage()
+
   if (services.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white py-12">
         <DollarSign className="h-12 w-12 text-slate-400" />
-        <h3 className="mt-4 text-lg font-semibold text-slate-900">No services yet</h3>
-        <p className="mt-2 text-sm text-slate-600">Add services like breakfast, parking, or transfers</p>
+        <h3 className="mt-4 text-lg font-semibold text-slate-900">{t.services.noServices}</h3>
+        <p className="mt-2 text-sm text-slate-600">{t.services.noServicesDescription}</p>
       </div>
     )
   }
@@ -50,13 +53,13 @@ export function ServiceList({ services, instanceId, currency }: ServiceListProps
               </span>
             </div>
 
-            {service.taxRate && <p className="text-sm text-slate-600">Tax: {Number(service.taxRate).toFixed(1)}%</p>}
+            {service.taxRate && <p className="text-sm text-slate-600">{t.services.tax}: {Number(service.taxRate).toFixed(1)}%</p>}
 
             <div className="flex flex-wrap gap-2">
               <Badge variant={service.isActive ? "default" : "secondary"}>
-                {service.isActive ? "Active" : "Inactive"}
+                {service.isActive ? t.services.active : t.services.inactive}
               </Badge>
-              <Badge variant="secondary">{service.isRefundable ? "Refundable" : "Non-refundable"}</Badge>
+              <Badge variant="secondary">{service.isRefundable ? t.services.refundable : t.services.nonRefundable}</Badge>
             </div>
           </CardContent>
         </Card>

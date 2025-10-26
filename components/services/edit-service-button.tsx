@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Pencil, Loader2 } from "lucide-react"
+import { useLanguage } from "@/lib/contexts/language-context"
 
 interface EditServiceButtonProps {
   service: {
@@ -34,6 +35,7 @@ interface EditServiceButtonProps {
 
 export function EditServiceButton({ service, instanceId }: EditServiceButtonProps) {
   const router = useRouter()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +64,7 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
 
       if (!response.ok) {
         const errorData = await response.json()
-        setError(errorData.error || "Failed to update service")
+        setError(errorData.error || t.services.failedToUpdate)
         setIsLoading(false)
         return
       }
@@ -70,7 +72,7 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
       setOpen(false)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      setError(t.auth.errorOccurred)
       setIsLoading(false)
     }
   }
@@ -84,18 +86,18 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Service</DialogTitle>
-          <DialogDescription>Update service details and pricing</DialogDescription>
+          <DialogTitle>{t.services.editService}</DialogTitle>
+          <DialogDescription>{t.services.editServiceDescription}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Service Name *</Label>
+            <Label htmlFor="name">{t.services.serviceNameRequired}</Label>
             <Input id="name" name="name" defaultValue={service.name} required disabled={isLoading} />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t.services.description}</Label>
             <Textarea
               id="description"
               name="description"
@@ -107,7 +109,7 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="price">Price *</Label>
+              <Label htmlFor="price">{t.services.priceRequired}</Label>
               <Input
                 id="price"
                 name="price"
@@ -121,7 +123,7 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="taxRate">Tax Rate (%)</Label>
+              <Label htmlFor="taxRate">{t.services.taxRate}</Label>
               <Input
                 id="taxRate"
                 name="taxRate"
@@ -147,7 +149,7 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
                 className="h-4 w-4 rounded border-slate-300"
               />
               <Label htmlFor="isRefundable" className="cursor-pointer">
-                Refundable
+                {t.services.refundable}
               </Label>
             </div>
 
@@ -162,7 +164,7 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
                 className="h-4 w-4 rounded border-slate-300"
               />
               <Label htmlFor="isActive" className="cursor-pointer">
-                Active
+                {t.services.active}
               </Label>
             </div>
           </div>
@@ -175,11 +177,11 @@ export function EditServiceButton({ service, instanceId }: EditServiceButtonProp
 
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-              Cancel
+              {t.common.cancel}
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              {t.common.saveChanges}
             </Button>
           </div>
         </form>
