@@ -13,11 +13,11 @@ const store: RateLimitStore = {}
 // Try to use Upstash Redis if available
 let redis: any = null
 try {
-  if (process.env["UPSTASH-KV_KV_REST_API_URL"] && process.env["UPSTASH-KV_KV_REST_API_TOKEN"]) {
+  if (process.env.UPSTASH_KV_REST_API_URL && process.env.UPSTASH_KV_REST_API_TOKEN) {
     const { Redis } = require("@upstash/redis")
     redis = new Redis({
-      url: process.env["UPSTASH-KV_KV_REST_API_URL"],
-      token: process.env["UPSTASH-KV_KV_REST_API_TOKEN"],
+      url: process.env.UPSTASH_KV_REST_API_URL,
+      token: process.env.UPSTASH_KV_REST_API_TOKEN,
     })
     logger.info("Rate limiting using Upstash Redis")
   } else {

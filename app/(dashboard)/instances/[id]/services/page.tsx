@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ServiceManagement } from "@/components/services/service-management"
+import { serializePrismaData } from "@/lib/serialize"
 
 export const dynamic = 'force-dynamic'
 
@@ -41,5 +42,11 @@ export default async function ServicesPage({
     orderBy: { priority: "desc" },
   })
 
-  return <ServiceManagement instance={instance} services={services} pricingRules={pricingRules} />
+  return (
+    <ServiceManagement
+      instance={serializePrismaData(instance)}
+      services={serializePrismaData(services)}
+      pricingRules={serializePrismaData(pricingRules)}
+    />
+  )
 }

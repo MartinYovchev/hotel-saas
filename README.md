@@ -29,8 +29,7 @@ A production-ready, open-source web application for hotel and guest-house owners
 ## 📋 Prerequisites
 
 - Node.js 18+ and npm/pnpm/yarn
-- Docker and Docker Compose (for local development)
-- Neon PostgreSQL database (or any PostgreSQL instance)
+- PostgreSQL database (Neon recommended)
 - Upstash Redis (optional, for rate limiting)
 
 ## 🛠️ Quick Start
@@ -61,15 +60,22 @@ cp .env.example .env
 Edit `.env` and configure:
 
 \`\`\`env
-# Database - Use your Neon database URL or local PostgreSQL
-NEON_NEON_DATABASE_URL="postgresql://user:password@localhost:5432/hotel_saas"
+# Database - Use your Neon database URL
+DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
+NEON_NEON_DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
+NEON_DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
 
 # NextAuth - Generate a secure secret
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="https://your-domain.com"
 NEXTAUTH_SECRET="your-secret-key-min-32-characters"
 
+# Admin User (for initial setup)
+SEED_ADMIN_EMAIL="admin@yourdomain.com"
+SEED_ADMIN_NAME="Admin User"
+SEED_ADMIN_PASSWORD="your-secure-password"
+
 # Node Environment
-NODE_ENV="development"
+NODE_ENV="production"
 \`\`\`
 
 **Generate NEXTAUTH_SECRET:**
@@ -77,41 +83,31 @@ NODE_ENV="development"
 openssl rand -base64 32
 \`\`\`
 
-### 4. Start Local Database (Optional)
-
-If you don't have a Neon database, use Docker:
-
-\`\`\`bash
-npm run docker:up
-\`\`\`
-
-This starts PostgreSQL and Redis locally.
-
-### 5. Initialize Database
+### 4. Initialize Database
 
 \`\`\`bash
 # Generate Prisma client
 npm run db:generate
 
-# Push schema to database
-npm run db:push
+# Run migrations
+npm run db:migrate:deploy
 
-# Seed with demo data
+# Create admin user (optional)
 npm run db:seed
 \`\`\`
 
-### 6. Start Development Server
+### 5. Start Server
 
 \`\`\`bash
+# Development
 npm run dev
+
+# Production
+npm run build
+npm start
 \`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### 7. Login with Demo Account
-
-- **Email**: `demo@hotel-saas.com`
-- **Password**: `demo123`
+Open [http://localhost:3000](http://localhost:3000) in your browser and log in with your admin credentials.
 
 ## 📁 Project Structure
 
@@ -153,13 +149,10 @@ hotel-saas/
 │   └── rate-limit.ts     # Rate limiting
 ├── prisma/               # Database
 │   ├── schema.prisma     # Database schema
-│   ├── seed.ts           # Development seed
 │   └── seed-prod.ts      # Production seed
 ├── scripts/              # Deployment scripts
-│   ├── migrate.sh        # Migration script
-│   └── seed-prod.sh      # Production seeding
+│   └── migrate.sh        # Migration script
 ├── types/                # TypeScript types
-├── docker-compose.yml    # Development Docker setup
 ├── docker-compose.prod.yml # Production Docker setup
 ├── Dockerfile            # Production Docker image
 └── DEPLOYMENT.md         # Deployment guide
@@ -191,32 +184,29 @@ All data is isolated by `userId` to ensure security.
 | `npm start` | Start production server |
 | `npm run lint` | Run ESLint |
 | `npm run db:generate` | Generate Prisma client |
-| `npm run db:push` | Push schema to database |
-| `npm run db:migrate` | Create migration |
 | `npm run db:migrate:deploy` | Deploy migrations |
-| `npm run db:seed` | Seed with demo data |
-| `npm run db:seed:prod` | Seed production admin |
-| `npm run db:studio` | Open Prisma Studio |
-| `npm run docker:up` | Start Docker services |
-| `npm run docker:down` | Stop Docker services |
-| `npm run docker:prod` | Start production Docker |
-| `npm run test` | Run Jest tests |
-| `npm run test:e2e` | Run Playwright E2E tests |
+| `npm run db:seed` | Create admin user |
+| `npm run migrate` | Run migration script |
+| `npm run docker:up` | Start production Docker |
+| `npm run docker:down` | Stop production Docker |
 
 ### Environment Variables
 
-#### Required (Development)
+#### Required
 
-- `NEON_DATABASE_URL` - PostgreSQL connection string
-- `NEXTAUTH_URL` - Application URL (http://localhost:3000)
+- `DATABASE_URL` - PostgreSQL connection string
+- `NEON_NEON_DATABASE_URL` - Neon PostgreSQL connection string
+- `NEON_DATABASE_URL` - Neon PostgreSQL connection string
+- `NEXTAUTH_URL` - Application URL (https://your-domain.com)
 - `NEXTAUTH_SECRET` - Random secret (min 32 chars)
 
-#### Optional (Development)
+#### Optional
 
-- `UPSTASH-KV_KV_REST_API_URL` - Upstash Redis URL (for rate limiting)
-- `UPSTASH-KV_KV_REST_API_TOKEN` - Upstash Redis token
-
-#### Production
+- `UPSTASH_KV_REST_API_URL` - Upstash Redis URL (for rate limiting)
+- `UPSTASH_KV_REST_API_TOKEN` - Upstash Redis token
+- `SEED_ADMIN_EMAIL` - Admin email for initial setup
+- `SEED_ADMIN_NAME` - Admin name for initial setup
+- `SEED_ADMIN_PASSWORD` - Admin password for initial setup
 
 See `DEPLOYMENT.md` for complete production setup guide.
 

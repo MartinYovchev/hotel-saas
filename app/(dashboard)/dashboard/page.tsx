@@ -4,49 +4,24 @@ import { authOptions } from "@/lib/auth"
 import { Building2 } from "lucide-react"
 import { InstanceList } from "@/components/instances/instance-list"
 import { CreateInstanceButton } from "@/components/instances/create-instance-button"
+import { serializePrismaData } from "@/lib/serialize"
 
 export const dynamic = 'force-dynamic'
 
-const isPreviewMode = !process.env.NEON_NEON_DATABASE_URL || process.env.NEON_DATABASE_URL?.includes("placeholder")
-
-// Demo data for preview mode
-const DEMO_INSTANCES = [
-  {
-    id: "demo-instance-1",
-    name: "Demo Hotel",
-    address: "123 Demo Street, Demo City",
-    currency: "USD",
-    _count: {
-      rooms: 12,
-      reservations: 8,
-    },
-  },
-]
-
 async function getInstances(userId: string) {
-  if (isPreviewMode) {
-    console.log("[v0] Preview mode - using demo instances")
-    return DEMO_INSTANCES
-  }
-
-  try {
-    const { prisma } = await import("@/lib/prisma")
-    return await prisma.instance.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      include: {
-        _count: {
-          select: {
-            rooms: true,
-            reservations: true,
-          },
+  const { prisma } = await import("@/lib/prisma")
+  return await prisma.instance.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      _count: {
+        select: {
+          rooms: true,
+          reservations: true,
         },
       },
-    })
-  } catch (error) {
-    console.log("[v0] Database error, using demo instances:", error)
-    return DEMO_INSTANCES
-  }
+    },
+  })
 }
 
 export default async function DashboardPage() {
@@ -63,6 +38,8 @@ export default async function DashboardPage() {
     redirect("/onboarding")
   }
 
+  const serializedInstances = serializePrismaData(instances)
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="border-b border-slate-200 bg-white">
@@ -78,8 +55,8 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {instances.length > 0 ? (
-          <InstanceList instances={instances} />
+        {serializedInstances.length > 0 ? (
+          <InstanceList instances={serializedInstances} />
         ) : (
           <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white py-12">
             <Building2 className="h-12 w-12 text-slate-400" />

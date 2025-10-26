@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
@@ -46,8 +46,12 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
 
   const availableRooms = rooms.filter((room) => room.status === "AVAILABLE")
 
-  const calculatePrice = () => {
-    if (!selectedRoom || !checkIn || !checkOut) return
+  // Automatically calculate price when room or dates change
+  useEffect(() => {
+    if (!selectedRoom || !checkIn || !checkOut) {
+      setCalculatedPrice(0)
+      return
+    }
 
     const room = rooms.find((r) => r.id === selectedRoom)
     if (!room) return
@@ -56,8 +60,10 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
     if (nights > 0) {
       const price = Number(room.roomType.basePrice) * nights
       setCalculatedPrice(price)
+    } else {
+      setCalculatedPrice(0)
     }
-  }
+  }, [selectedRoom, checkIn, checkOut, rooms])
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -100,6 +106,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
       router.refresh()
     } catch (error) {
       setError("An error occurred. Please try again.")
+    } finally {
       setIsLoading(false)
     }
   }
@@ -160,10 +167,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
               required
               disabled={isLoading}
               value={selectedRoom}
-              onChange={(e) => {
-                setSelectedRoom(e.target.value)
-                calculatePrice()
-              }}
+              onChange={(e) => setSelectedRoom(e.target.value)}
             >
               <option value="">Select a room</option>
               {availableRooms.map((room) => (
@@ -185,10 +189,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
                 required
                 disabled={isLoading}
                 value={checkIn}
-                onChange={(e) => {
-                  setCheckIn(e.target.value)
-                  calculatePrice()
-                }}
+                onChange={(e) => setCheckIn(e.target.value)}
               />
             </div>
 
@@ -201,10 +202,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
                 required
                 disabled={isLoading}
                 value={checkOut}
-                onChange={(e) => {
-                  setCheckOut(e.target.value)
-                  calculatePrice()
-                }}
+                onChange={(e) => setCheckOut(e.target.value)}
               />
             </div>
           </div>

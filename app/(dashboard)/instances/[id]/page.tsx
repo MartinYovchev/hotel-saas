@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { InstanceOverview } from "@/components/instances/instance-overview"
 import { notFound } from "next/navigation"
+import { serializePrismaData } from "@/lib/serialize"
 
 export const dynamic = 'force-dynamic'
 
@@ -40,5 +41,5 @@ export default async function InstancePage({
     notFound()
   }
 
-  return <InstanceOverview instance={instance} />
+  return <InstanceOverview instance={serializePrismaData(instance)} />
 }

@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ReservationManagement } from "@/components/reservations/reservation-management"
+import { serializePrismaData } from "@/lib/serialize"
 
 export const dynamic = 'force-dynamic'
 
@@ -51,5 +52,11 @@ export default async function ReservationsPage({
     orderBy: { roomNumber: "asc" },
   })
 
-  return <ReservationManagement instance={instance} reservations={reservations} rooms={rooms} />
+  return (
+    <ReservationManagement
+      instance={serializePrismaData(instance)}
+      reservations={serializePrismaData(reservations)}
+      rooms={serializePrismaData(rooms)}
+    />
+  )
 }

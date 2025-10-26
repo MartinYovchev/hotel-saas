@@ -2,11 +2,13 @@ import { Suspense } from "react"
 import { ReportsView } from "@/components/reports/reports-view"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function ReportsPage({
+export default async function ReportsPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
+  const { id } = await params
+
   return (
     <div className="space-y-6">
       <div>

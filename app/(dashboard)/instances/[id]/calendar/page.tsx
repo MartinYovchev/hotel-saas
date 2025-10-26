@@ -2,11 +2,13 @@ import { Suspense } from "react"
 import { CalendarView } from "@/components/calendar/calendar-view"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function CalendarPage({
+export default async function CalendarPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
+  const { id } = await params
+
   return (
     <div className="space-y-6">
       <div>
