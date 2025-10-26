@@ -7,6 +7,7 @@ import { Download } from "lucide-react"
 import { OccupancyReport } from "./occupancy-report"
 import { RevenueReport } from "./revenue-report"
 import { AnalyticsDashboard } from "./analytics-dashboard"
+import { RoomAvailability } from "./room-availability"
 import { useLanguage } from "@/lib/contexts/language-context"
 
 export function ReportsView({ instanceId }: { instanceId: string }) {
@@ -39,12 +40,17 @@ export function ReportsView({ instanceId }: { instanceId: string }) {
     <Tabs defaultValue="overview" className="space-y-4">
       <TabsList>
         <TabsTrigger value="overview">{t.reports.overview}</TabsTrigger>
+        <TabsTrigger value="availability">{t.reports.availability || "Availability"}</TabsTrigger>
         <TabsTrigger value="occupancy">{t.reports.occupancy}</TabsTrigger>
         <TabsTrigger value="revenue">{t.reports.revenue}</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="space-y-4">
         <AnalyticsDashboard instanceId={instanceId} />
+      </TabsContent>
+
+      <TabsContent value="availability" className="space-y-4">
+        <RoomAvailability instanceId={instanceId} />
       </TabsContent>
 
       <TabsContent value="occupancy" className="space-y-4">
