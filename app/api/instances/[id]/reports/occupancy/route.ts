@@ -4,16 +4,18 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { subDays, eachDayOfInterval, format } from "date-fns"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     const instance = await prisma.instance.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     })
@@ -26,12 +28,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const days = eachDayOfInterval({ start: thirtyDaysAgo, end: new Date() })
 
     const rooms = await prisma.room.findMany({
-      where: { instanceId: params.id },
+      where: { instanceId: id },
     })
 
     const reservations = await prisma.reservation.findMany({
       where: {
-        instanceId: params.id,
+        instanceId: id,
         status: {
           in: ["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"],
         },

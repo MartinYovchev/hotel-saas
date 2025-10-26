@@ -4,16 +4,18 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { subDays } from "date-fns"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     const instance = await prisma.instance.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     })
@@ -27,7 +29,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // Get total revenue
     const reservations = await prisma.reservation.findMany({
       where: {
-        instanceId: params.id,
+        instanceId: id,
         checkIn: {
           gte: thirtyDaysAgo,
         },
@@ -44,7 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     // Calculate occupancy rate
     const rooms = await prisma.room.findMany({
-      where: { instanceId: params.id },
+      where: { instanceId: id },
     })
 
     const totalRoomNights = rooms.length * 30

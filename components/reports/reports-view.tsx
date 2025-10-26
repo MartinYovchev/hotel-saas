@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { OccupancyReport } from "./occupancy-report"
 import { RevenueReport } from "./revenue-report"
-import { PerformanceMetrics } from "./performance-metrics"
+import { AnalyticsDashboard } from "./analytics-dashboard"
 import { useLanguage } from "@/lib/contexts/language-context"
 
 export function ReportsView({ instanceId }: { instanceId: string }) {
@@ -44,7 +44,7 @@ export function ReportsView({ instanceId }: { instanceId: string }) {
       </TabsList>
 
       <TabsContent value="overview" className="space-y-4">
-        <PerformanceMetrics instanceId={instanceId} />
+        <AnalyticsDashboard instanceId={instanceId} />
       </TabsContent>
 
       <TabsContent value="occupancy" className="space-y-4">
