@@ -4,16 +4,18 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { subDays, eachDayOfInterval, format } from "date-fns"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     const instance = await prisma.instance.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     })
@@ -32,12 +34,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     if (reportType === "occupancy") {
       const rooms = await prisma.room.findMany({
-        where: { instanceId: params.id },
+        where: { instanceId: id },
       })
 
       const reservations = await prisma.reservation.findMany({
         where: {
-          instanceId: params.id,
+          instanceId: id,
           status: {
             in: ["CONFIRMED", "CHECKED_IN", "CHECKED_OUT"],
           },
@@ -60,7 +62,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     } else if (reportType === "revenue") {
       const reservations = await prisma.reservation.findMany({
         where: {
-          instanceId: params.id,
+          instanceId: id,
           checkIn: {
             gte: thirtyDaysAgo,
           },
@@ -89,17 +91,17 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
           )
         })
 
-        const roomRevenue = dayReservations.reduce((sum, reservation) => sum + reservation.totalPrice, 0)
+        const roomRevenue = dayReservations.reduce((sum, reservation) => sum + Number(reservation.totalPrice), 0)
 
         const serviceRevenue = dayReservations.reduce((sum, reservation) => {
           const servicesTotal = reservation.services.reduce(
-            (serviceSum, rs) => serviceSum + rs.service.price * rs.quantity,
+            (serviceSum, rs) => serviceSum + Number(rs.service.price) * rs.quantity,
             0,
           )
           return sum + servicesTotal
         }, 0)
 
-        const totalRevenue = roomRevenue + serviceRevenue
+        const totalRevenue = Number(roomRevenue) + Number(serviceRevenue)
 
         csvContent += `${format(day, "yyyy-MM-dd")},${roomRevenue.toFixed(2)},${serviceRevenue.toFixed(2)},${totalRevenue.toFixed(2)}\n`
       })

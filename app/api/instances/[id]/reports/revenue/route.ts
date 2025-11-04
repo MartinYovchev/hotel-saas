@@ -50,11 +50,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const revenueData = days.map((day) => {
       const dayReservations = reservations.filter((reservation) => isSameDay(new Date(reservation.checkIn), day))
 
-      const roomRevenue = dayReservations.reduce((sum, reservation) => sum + reservation.totalPrice, 0)
+      const roomRevenue = dayReservations.reduce((sum, reservation) => sum + Number(reservation.totalPrice), 0)
 
       const serviceRevenue = dayReservations.reduce((sum, reservation) => {
         const servicesTotal = reservation.services.reduce(
-          (serviceSum, rs) => serviceSum + rs.service.price * rs.quantity,
+          (serviceSum, rs) => serviceSum + Number(rs.service.price) * rs.quantity,
           0,
         )
         return sum + servicesTotal
@@ -62,9 +62,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
       return {
         date: format(day, "yyyy-MM-dd"),
-        roomRevenue,
-        serviceRevenue,
-        totalRevenue: roomRevenue + serviceRevenue,
+        roomRevenue: Number(roomRevenue),
+        serviceRevenue: Number(serviceRevenue),
+        totalRevenue: Number(roomRevenue) + Number(serviceRevenue),
       }
     })
 

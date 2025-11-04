@@ -40,7 +40,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
     })
 
-    const totalRevenue = reservations.reduce((sum, reservation) => sum + reservation.totalPrice, 0)
+    const totalRevenue = reservations.reduce((sum, reservation) => sum + Number(reservation.totalPrice), 0)
 
     // Get total reservations
     const totalReservations = reservations.length
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const occupancyRate = totalRoomNights > 0 ? (occupiedNights / totalRoomNights) * 100 : 0
 
     // Calculate average daily rate
-    const averageDailyRate = occupiedNights > 0 ? totalRevenue / occupiedNights : 0
+    const averageDailyRate = occupiedNights > 0 ? Number(totalRevenue) / occupiedNights : 0
 
     return NextResponse.json(serializePrismaData({
       totalRevenue,
