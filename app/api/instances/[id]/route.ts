@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { serializePrismaData } from "@/lib/serialize"
 
 const updateInstanceSchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
@@ -13,7 +14,7 @@ const updateInstanceSchema = z.object({
   currency: z.string().optional(),
 })
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -21,13 +22,14 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const data = updateInstanceSchema.parse(body)
 
     // Verify ownership
     const existingInstance = await prisma.instance.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     })
@@ -37,7 +39,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
 
     const instance = await prisma.instance.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: data.name,
         address: data.address || null,
@@ -48,7 +50,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       },
     })
 
-    return NextResponse.json({ instance })
+    return NextResponse.json(serializePrismaData({ instance }))
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors[0].message }, { status: 400 })
@@ -59,7 +61,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -67,10 +69,12 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Verify ownership
     const existingInstance = await prisma.instance.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     })
@@ -80,7 +84,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.instance.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Instance deleted successfully" })

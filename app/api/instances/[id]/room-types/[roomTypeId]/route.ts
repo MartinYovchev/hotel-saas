@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { serializePrismaData } from "@/lib/serialize"
 
 const updateRoomTypeSchema = z.object({
   name: z.string().min(1, "Name is required").optional(),
@@ -12,7 +13,7 @@ const updateRoomTypeSchema = z.object({
   amenities: z.array(z.string()).optional(),
 })
 
-export async function PATCH(request: Request, { params }: { params: { id: string; roomTypeId: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string; roomTypeId: string }> }) {
   try {
     const session = await getServerSession(authOptions)
 
@@ -20,10 +21,12 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id, roomTypeId } = await params
+
     // Verify instance ownership
     const instance = await prisma.instance.findFirst({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     })
@@ -37,8 +40,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     const roomType = await prisma.roomType.update({
       where: {
-        id: params.roomTypeId,
-        instanceId: params.id,
+        id: roomTypeId,
+        instanceId: id,
       },
       data: {
         name: data.name,
@@ -49,7 +52,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       },
     })
 
-    return NextResponse.json({ roomType })
+    return NextResponse.json(serializePrismaData({ roomType }))
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors[0].message }, { status: 400 })

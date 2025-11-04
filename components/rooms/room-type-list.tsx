@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Users, Bed } from "lucide-react"
 import { EditRoomTypeButton } from "./edit-room-type-button"
 import { useLanguage } from "@/lib/contexts/language-context"
+import { formatCurrency } from "@/lib/currency"
 
 interface RoomTypeListProps {
   roomTypes: Array<{
@@ -19,9 +20,10 @@ interface RoomTypeListProps {
     }
   }>
   instanceId: string
+  currency: string
 }
 
-export function RoomTypeList({ roomTypes, instanceId }: RoomTypeListProps) {
+export function RoomTypeList({ roomTypes, instanceId, currency }: RoomTypeListProps) {
   const { t } = useLanguage()
 
   if (roomTypes.length === 0) {
@@ -47,7 +49,7 @@ export function RoomTypeList({ roomTypes, instanceId }: RoomTypeListProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold">${Number(roomType.basePrice).toFixed(2)}</span>
+              <span className="text-2xl font-bold">{formatCurrency(Number(roomType.basePrice), currency)}</span>
               <span className="text-sm text-slate-600">{t.rooms.basePrice.split(' (')[0].toLowerCase()}</span>
             </div>
 

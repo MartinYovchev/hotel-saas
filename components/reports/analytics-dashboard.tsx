@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, Users, Bed, TrendingUp, BarChart3, Calendar } from "lucide-react"
 import { useLanguage } from "@/lib/contexts/language-context"
+import { formatCurrency, getCurrencySymbol } from "@/lib/currency"
 import {
   LineChart,
   Line,
@@ -48,7 +49,7 @@ interface RevenueData {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"]
 
-export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
+export function AnalyticsDashboard({ instanceId, currency }: { instanceId: string; currency: string }) {
   const { t } = useLanguage()
   const [metrics, setMetrics] = useState<Metrics | null>(null)
   const [occupancyData, setOccupancyData] = useState<OccupancyData[]>([])
@@ -150,7 +151,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${metrics.totalRevenue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(metrics.totalRevenue, currency)}</div>
             <p className="text-xs text-muted-foreground">{t.reports.last30Days || "Last 30 days"}</p>
           </CardContent>
         </Card>
@@ -183,7 +184,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
             <TrendingUp className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${metrics.averageDailyRate.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(metrics.averageDailyRate, currency)}</div>
             <p className="text-xs text-muted-foreground">{t.reports.last30Days || "Last 30 days"}</p>
           </CardContent>
         </Card>
@@ -197,7 +198,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
             <BarChart3 className="h-4 w-4 text-cyan-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${metrics.revPAR.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(metrics.revPAR, currency)}</div>
             <p className="text-xs text-muted-foreground">{t.reports.revenuePerAvailableRoom || "Revenue Per Available Room"}</p>
           </CardContent>
         </Card>
@@ -226,7 +227,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
               <XAxis dataKey="date" />
               <YAxis />
               <Tooltip
-                formatter={(value: number) => `$${value.toFixed(2)}`}
+                formatter={(value: number) => formatCurrency(value, currency)}
                 contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.95)", border: "1px solid #ccc" }}
               />
               <Legend />
@@ -286,7 +287,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }) => `${name}: $${value.toFixed(0)}`}
+                  label={({ name, value }) => `${name}: ${formatCurrency(value, currency)}`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -295,7 +296,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                <Tooltip formatter={(value: number) => formatCurrency(value, currency)} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -313,7 +314,7 @@ export function AnalyticsDashboard({ instanceId }: { instanceId: string }) {
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip
-                  formatter={(value: number) => `$${value.toFixed(2)}`}
+                  formatter={(value: number) => formatCurrency(value, currency)}
                   contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.95)", border: "1px solid #ccc" }}
                 />
                 <Legend />

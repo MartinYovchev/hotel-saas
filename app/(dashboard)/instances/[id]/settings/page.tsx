@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { InstanceSettingsForm } from "@/components/instances/instance-settings-form"
+import { DangerZone } from "@/components/instances/danger-zone"
 import { notFound } from "next/navigation"
 
 export const dynamic = 'force-dynamic'
@@ -38,7 +39,10 @@ export default async function InstanceSettingsPage({
         <p className="mt-2 text-slate-600">Manage your property settings and preferences</p>
       </div>
 
-      <InstanceSettingsForm instance={instance} />
+      <div className="space-y-8">
+        <InstanceSettingsForm instance={instance} />
+        <DangerZone instanceId={instance.id} />
+      </div>
     </div>
   )
 }

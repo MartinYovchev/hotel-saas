@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, Users, Bed, TrendingUp } from "lucide-react"
+import { formatCurrency } from "@/lib/currency"
 
 interface Metrics {
   totalRevenue: number
@@ -11,7 +12,7 @@ interface Metrics {
   averageDailyRate: number
 }
 
-export function PerformanceMetrics({ instanceId }: { instanceId: string }) {
+export function PerformanceMetrics({ instanceId, currency }: { instanceId: string; currency: string }) {
   const [metrics, setMetrics] = useState<Metrics | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -46,7 +47,7 @@ export function PerformanceMetrics({ instanceId }: { instanceId: string }) {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">${metrics.totalRevenue.toFixed(2)}</div>
+          <div className="text-2xl font-bold">{formatCurrency(metrics.totalRevenue, currency)}</div>
           <p className="text-xs text-muted-foreground">Last 30 days</p>
         </CardContent>
       </Card>
@@ -79,7 +80,7 @@ export function PerformanceMetrics({ instanceId }: { instanceId: string }) {
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">${metrics.averageDailyRate.toFixed(2)}</div>
+          <div className="text-2xl font-bold">{formatCurrency(metrics.averageDailyRate, currency)}</div>
           <p className="text-xs text-muted-foreground">Last 30 days</p>
         </CardContent>
       </Card>

@@ -69,7 +69,7 @@ export function ReservationManagement({ instance, reservations, rooms }: Reserva
               <h1 className="text-3xl font-bold text-slate-900">{t.reservations.title}</h1>
               <p className="mt-1 text-sm text-slate-600">{instance.name}</p>
             </div>
-            <CreateReservationButton instanceId={instance.id} rooms={rooms} />
+            <CreateReservationButton instanceId={instance.id} rooms={rooms} currency={instance.currency} />
           </div>
         </div>
       </div>

@@ -93,6 +93,17 @@ export const en = {
     settingsUpdated: "Settings updated successfully!",
     failedToUpdate: "Failed to update property",
     saveChanges: "Save Changes",
+    dangerZone: "Danger Zone",
+    dangerZoneDescription: "Irreversible and destructive actions",
+    clearAllReservations: "Clear All Reservations",
+    clearAllReservationsDescription: "Permanently delete all reservations and booking history",
+    clearAllReservationsConfirm: "Are you sure you want to delete ALL reservations? This action cannot be undone.",
+    clearAllStatistics: "Clear All Statistics",
+    clearAllStatisticsDescription: "Reset all analytics, reports, and statistical data",
+    clearAllStatisticsConfirm: "Are you sure you want to clear all statistics? This will reset all your analytics data but keep your reservations.",
+    reservationsCleared: "All reservations have been deleted",
+    statisticsCleared: "All statistics have been cleared",
+    failedToClear: "Failed to clear data",
   },
 
   rooms: {

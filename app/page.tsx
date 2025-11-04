@@ -260,7 +260,10 @@ export default function LandingPage() {
               </span>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm">
-              `{t.landing.footer.copyright}`<Link href="https://www.linkedin.com/in/ivan-ivanov-8b1b4b200/" className="text-blue-500 hover:text-blue-600">{t.landing.footer.developer}</Link>
+              {t.landing.footer.copyright}
+              <Link href="https://www.linkedin.com/in/ivan-ivanov-8b1b4b200/" className="text-blue-500 hover:text-blue-600">
+                {t.landing.footer.developer}
+              </Link>
             </p>
           </div>
         </div>

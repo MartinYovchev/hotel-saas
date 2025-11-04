@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { z } from "zod"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { serializePrismaData } from "@/lib/serialize"
 
 const createRoomSchema = z.object({
   roomNumber: z.string().min(1, "Room number is required"),
@@ -61,7 +62,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       },
     })
 
-    return NextResponse.json({ room }, { status: 201 })
+    return NextResponse.json(serializePrismaData({ room }), { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors[0].message }, { status: 400 })

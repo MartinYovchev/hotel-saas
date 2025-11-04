@@ -69,6 +69,7 @@ export function CreateRoomTypeButton({ instanceId }: { instanceId: string }) {
       setOpen(false)
       setAmenities([])
       router.refresh()
+      setIsLoading(false)
     } catch (error) {
       setError("An error occurred. Please try again.")
       setIsLoading(false)

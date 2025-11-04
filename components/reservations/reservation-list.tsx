@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, User, Bed } from "lucide-react"
 import { EditReservationButton } from "./edit-reservation-button"
 import { useLanguage } from "@/lib/contexts/language-context"
+import { formatCurrency } from "@/lib/currency"
 
 interface ReservationListProps {
   reservations: Array<{
@@ -123,7 +124,7 @@ export function ReservationList({ reservations, instanceId, currency }: Reservat
                 <div className="flex items-center justify-between border-t border-slate-200 pt-3">
                   <span className="text-sm text-slate-600">{t.reservations.totalPrice}</span>
                   <span className="text-lg font-semibold text-slate-900">
-                    {currency} {Number(reservation.totalPrice).toFixed(2)}
+                    {formatCurrency(Number(reservation.totalPrice), currency)}
                   </span>
                 </div>
               </div>

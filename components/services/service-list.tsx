@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { DollarSign } from "lucide-react"
 import { EditServiceButton } from "./edit-service-button"
 import { useLanguage } from "@/lib/contexts/language-context"
+import { formatCurrency } from "@/lib/currency"
 
 interface ServiceListProps {
   services: Array<{
@@ -49,7 +50,7 @@ export function ServiceList({ services, instanceId, currency }: ServiceListProps
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-2xl font-bold">
-                {currency} {Number(service.price).toFixed(2)}
+                {formatCurrency(Number(service.price), currency)}
               </span>
             </div>
 

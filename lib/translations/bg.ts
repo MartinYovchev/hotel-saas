@@ -95,6 +95,17 @@ export const bg: Translations = {
     settingsUpdated: "Настройките са актуализирани успешно!",
     failedToUpdate: "Неуспешна актуализация на имота",
     saveChanges: "Запази промените",
+    dangerZone: "Опасна зона",
+    dangerZoneDescription: "Необратими и деструктивни действия",
+    clearAllReservations: "Изчисти всички резервации",
+    clearAllReservationsDescription: "Перманентно изтрий всички резервации и история на резервации",
+    clearAllReservationsConfirm: "Сигурни ли сте, че искате да изтриете ВСИЧКИ резервации? Това действие не може да бъде отменено.",
+    clearAllStatistics: "Изчисти всички статистики",
+    clearAllStatisticsDescription: "Нулирай всички аналитики, отчети и статистически данни",
+    clearAllStatisticsConfirm: "Сигурни ли сте, че искате да изчистите всички статистики? Това ще нулира всички ваши аналитични данни, но ще запази резервациите ви.",
+    reservationsCleared: "Всички резервации са изтрити",
+    statisticsCleared: "Всички статистики са изчистени",
+    failedToClear: "Неуспешно изчистване на данни",
   },
 
   rooms: {

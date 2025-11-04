@@ -58,6 +58,7 @@ export function CreateServiceButton({ instanceId }: { instanceId: string }) {
 
       setOpen(false)
       router.refresh()
+      setIsLoading(false)
     } catch (error) {
       setError(t.auth.errorOccurred)
       setIsLoading(false)

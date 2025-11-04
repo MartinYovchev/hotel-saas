@@ -63,6 +63,7 @@ export function CreateRoomButton({ instanceId, roomTypes }: CreateRoomButtonProp
 
       setOpen(false)
       router.refresh()
+      setIsLoading(false)
     } catch (error) {
       setError(t.auth.errorOccurred)
       setIsLoading(false)

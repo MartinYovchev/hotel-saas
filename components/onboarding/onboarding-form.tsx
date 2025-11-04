@@ -50,6 +50,7 @@ export function OnboardingForm() {
       const result = await response.json()
       router.push(`/instances/${result.instance.id}`)
       router.refresh()
+      setIsLoading(false)
     } catch (error) {
       setError(t.auth.errorOccurred)
       setIsLoading(false)

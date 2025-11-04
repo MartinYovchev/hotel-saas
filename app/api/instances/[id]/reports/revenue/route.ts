@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { subDays, eachDayOfInterval, format, isSameDay } from "date-fns"
+import { serializePrismaData } from "@/lib/serialize"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }
     })
 
-    return NextResponse.json(revenueData)
+    return NextResponse.json(serializePrismaData(revenueData))
   } catch (error) {
     console.error("Failed to fetch revenue data:", error)
     return NextResponse.json({ error: "Failed to fetch revenue data" }, { status: 500 })

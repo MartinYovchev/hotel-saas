@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Bed } from "lucide-react"
 import { EditRoomButton } from "./edit-room-button"
 import { useLanguage } from "@/lib/contexts/language-context"
+import { formatCurrency } from "@/lib/currency"
 
 interface RoomListProps {
   rooms: Array<{
@@ -19,6 +20,7 @@ interface RoomListProps {
     }
   }>
   instanceId: string
+  currency: string
 }
 
 const statusColors = {
@@ -28,7 +30,7 @@ const statusColors = {
   CLEANING: "bg-blue-100 text-blue-800",
 }
 
-export function RoomList({ rooms, instanceId }: RoomListProps) {
+export function RoomList({ rooms, instanceId, currency }: RoomListProps) {
   const { t } = useLanguage()
 
   const getStatusText = (status: string) => {
@@ -80,7 +82,7 @@ export function RoomList({ rooms, instanceId }: RoomListProps) {
               </Badge>
               {room.floor !== null && <p className="text-sm text-slate-600">{t.rooms.floor} {room.floor}</p>}
               <p className="text-sm font-semibold text-slate-900">
-                ${Number(room.roomType.basePrice).toFixed(2)}/{t.rooms.basePrice.split(' (')[0].toLowerCase()}
+                {formatCurrency(Number(room.roomType.basePrice), currency)}/{t.rooms.basePrice.split(' (')[0].toLowerCase()}
               </p>
             </div>
           </CardContent>

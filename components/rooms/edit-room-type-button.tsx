@@ -82,6 +82,7 @@ export function EditRoomTypeButton({ roomType, instanceId }: EditRoomTypeButtonP
 
       setOpen(false)
       router.refresh()
+      setIsLoading(false)
     } catch (error) {
       setError(t.auth.errorOccurred)
       setIsLoading(false)

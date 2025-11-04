@@ -20,6 +20,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Loader2 } from "lucide-react"
 import { differenceInDays } from "date-fns"
 import { useLanguage } from "@/lib/contexts/language-context"
+import { formatCurrency } from "@/lib/currency"
 
 interface CreateReservationButtonProps {
   instanceId: string
@@ -33,9 +34,10 @@ interface CreateReservationButtonProps {
       basePrice: any
     }
   }>
+  currency: string
 }
 
-export function CreateReservationButton({ instanceId, rooms }: CreateReservationButtonProps) {
+export function CreateReservationButton({ instanceId, rooms, currency }: CreateReservationButtonProps) {
   const router = useRouter()
   const { t } = useLanguage()
   const [open, setOpen] = useState(false)
@@ -174,8 +176,8 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
               <option value="">{t.reservations.selectRoom}</option>
               {availableRooms.map((room) => (
                 <option key={room.id} value={room.id}>
-                  {t.rooms.roomNumber} {room.roomNumber} - {room.roomType.name} ($
-                  {Number(room.roomType.basePrice).toFixed(2)}/night)
+                  {t.rooms.roomNumber} {room.roomNumber} - {room.roomType.name} (
+                  {formatCurrency(Number(room.roomType.basePrice), currency)}/night)
                 </option>
               ))}
             </select>
@@ -225,7 +227,7 @@ export function CreateReservationButton({ instanceId, rooms }: CreateReservation
             <div className="rounded-lg bg-blue-50 p-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-blue-900">{t.reservations.totalPrice}</span>
-                <span className="text-lg font-bold text-blue-900">${calculatedPrice.toFixed(2)}</span>
+                <span className="text-lg font-bold text-blue-900">{formatCurrency(calculatedPrice, currency)}</span>
               </div>
               <p className="mt-1 text-xs text-blue-700">
                 {checkIn && checkOut ? `${differenceInDays(new Date(checkOut), new Date(checkIn))} ${t.reservations.nights.toLowerCase()}` : ""}

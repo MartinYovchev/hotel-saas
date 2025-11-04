@@ -10,7 +10,7 @@ import { AnalyticsDashboard } from "./analytics-dashboard"
 import { RoomAvailability } from "./room-availability"
 import { useLanguage } from "@/lib/contexts/language-context"
 
-export function ReportsView({ instanceId }: { instanceId: string }) {
+export function ReportsView({ instanceId, currency }: { instanceId: string; currency: string }) {
   const { t } = useLanguage()
   const [loading, setLoading] = useState(false)
 
@@ -46,7 +46,7 @@ export function ReportsView({ instanceId }: { instanceId: string }) {
       </TabsList>
 
       <TabsContent value="overview" className="space-y-4">
-        <AnalyticsDashboard instanceId={instanceId} />
+        <AnalyticsDashboard instanceId={instanceId} currency={currency} />
       </TabsContent>
 
       <TabsContent value="availability" className="space-y-4">
@@ -70,7 +70,7 @@ export function ReportsView({ instanceId }: { instanceId: string }) {
             {t.reports.exportCSV}
           </Button>
         </div>
-        <RevenueReport instanceId={instanceId} />
+        <RevenueReport instanceId={instanceId} currency={currency} />
       </TabsContent>
     </Tabs>
   )

@@ -60,6 +60,7 @@ export function CreateInstanceButton() {
       setOpen(false)
       router.push(`/instances/${result.instance.id}`)
       router.refresh()
+      setIsLoading(false)
     } catch (error) {
       setError(t.auth.errorOccurred)
       setIsLoading(false)

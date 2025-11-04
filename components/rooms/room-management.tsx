@@ -15,6 +15,7 @@ interface RoomManagementProps {
   instance: {
     id: string
     name: string
+    currency: string
   }
   roomTypes: Array<{
     id: string
@@ -77,11 +78,11 @@ export function RoomManagement({ instance, roomTypes, rooms }: RoomManagementPro
           </div>
 
           <TabsContent value="types" className="mt-6">
-            <RoomTypeList roomTypes={roomTypes} instanceId={instance.id} />
+            <RoomTypeList roomTypes={roomTypes} instanceId={instance.id} currency={instance.currency} />
           </TabsContent>
 
           <TabsContent value="rooms" className="mt-6">
-            <RoomList rooms={rooms} instanceId={instance.id} />
+            <RoomList rooms={rooms} instanceId={instance.id} currency={instance.currency} />
           </TabsContent>
         </Tabs>
       </div>

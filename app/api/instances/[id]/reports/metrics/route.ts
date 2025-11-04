@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { subDays } from "date-fns"
+import { serializePrismaData } from "@/lib/serialize"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -62,12 +63,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Calculate average daily rate
     const averageDailyRate = occupiedNights > 0 ? totalRevenue / occupiedNights : 0
 
-    return NextResponse.json({
+    return NextResponse.json(serializePrismaData({
       totalRevenue,
       totalReservations,
       occupancyRate,
       averageDailyRate,
-    })
+    }))
   } catch (error) {
     console.error("Failed to fetch metrics:", error)
     return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 })

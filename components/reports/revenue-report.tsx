@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { format } from "date-fns"
+import { formatCurrency } from "@/lib/currency"
 
 interface RevenueData {
   date: string
@@ -12,7 +13,7 @@ interface RevenueData {
   totalRevenue: number
 }
 
-export function RevenueReport({ instanceId }: { instanceId: string }) {
+export function RevenueReport({ instanceId, currency }: { instanceId: string; currency: string }) {
   const [data, setData] = useState<RevenueData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -67,16 +68,16 @@ export function RevenueReport({ instanceId }: { instanceId: string }) {
             {data.map((row, index) => (
               <TableRow key={index}>
                 <TableCell>{format(new Date(row.date), "MMM dd, yyyy")}</TableCell>
-                <TableCell>${row.roomRevenue.toFixed(2)}</TableCell>
-                <TableCell>${row.serviceRevenue.toFixed(2)}</TableCell>
-                <TableCell className="font-medium">${row.totalRevenue.toFixed(2)}</TableCell>
+                <TableCell>{formatCurrency(row.roomRevenue, currency)}</TableCell>
+                <TableCell>{formatCurrency(row.serviceRevenue, currency)}</TableCell>
+                <TableCell className="font-medium">{formatCurrency(row.totalRevenue, currency)}</TableCell>
               </TableRow>
             ))}
             <TableRow className="bg-muted/50 font-semibold">
               <TableCell>Total</TableCell>
-              <TableCell>${totals.roomRevenue.toFixed(2)}</TableCell>
-              <TableCell>${totals.serviceRevenue.toFixed(2)}</TableCell>
-              <TableCell>${totals.totalRevenue.toFixed(2)}</TableCell>
+              <TableCell>{formatCurrency(totals.roomRevenue, currency)}</TableCell>
+              <TableCell>{formatCurrency(totals.serviceRevenue, currency)}</TableCell>
+              <TableCell>{formatCurrency(totals.totalRevenue, currency)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

@@ -68,6 +68,7 @@ export function EditReservationButton({ reservation, instanceId }: EditReservati
 
       setOpen(false)
       router.refresh()
+      setIsLoading(false)
     } catch (error) {
       setError(t.auth.errorOccurred)
       setIsLoading(false)
