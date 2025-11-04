@@ -360,6 +360,70 @@ export const en = {
     aed: "AED - UAE Dirham",
     bgn: "BGN - Bulgarian Lev",
   },
+
+  landing: {
+    brandName: "HotelSaaS",
+    login: "Login",
+    getStarted: "Get Started",
+    futureOfHotelManagement: "The Future of Hotel Management",
+    heroTitle1: "Manage Your Hotel",
+    heroTitle2: "With Ease",
+    heroSubtitle: "Transform your hotel operations with our powerful, intuitive platform. Manage rooms, reservations, and analytics all in one place.",
+    startFreeTrial: "Start Free Trial",
+    watchDemo: "Watch Demo",
+    stats: {
+      hotels: "Hotels",
+      bookingsPerMonth: "Bookings/Month",
+      uptime: "Uptime",
+      support: "Support",
+    },
+    features: {
+      title: "Everything You Need",
+      subtitle: "Powerful features to streamline your hotel operations",
+      roomManagement: {
+        title: "Room Management",
+        description: "Effortlessly manage room inventory, types, and availability with our intuitive interface.",
+      },
+      smartBooking: {
+        title: "Smart Booking",
+        description: "Advanced reservation system with real-time availability and automatic confirmations.",
+      },
+      analytics: {
+        title: "Analytics & Reports",
+        description: "Gain insights with comprehensive analytics, revenue tracking, and occupancy reports.",
+      },
+      guestManagement: {
+        title: "Guest Management",
+        description: "Build lasting relationships with integrated CRM and guest communication tools.",
+      },
+      multiLanguage: {
+        title: "Multi-Language",
+        description: "Serve global guests with built-in support for multiple languages and currencies.",
+      },
+      secure: {
+        title: "Secure & Reliable",
+        description: "Enterprise-grade security with 99.9% uptime and automatic data backups.",
+      },
+    },
+    benefits: {
+      title: "Why Choose HotelSaaS?",
+      increaseRevenue: "Increase revenue by up to 40%",
+      reduceWork: "Reduce manual work by 60%",
+      support247: "24/7 customer support",
+      freeUpdates: "Free updates and new features",
+      noCreditCard: "No credit card required for trial",
+      cancelAnytime: "Cancel anytime, no questions asked",
+    },
+    cta: {
+      title: "Ready to Transform Your Hotel?",
+      subtitle: "Join thousands of hotels already using HotelSaaS to streamline their operations",
+      getStartedFree: "Get Started for Free",
+    },
+    footer: {
+      copyright: "© 2025 HotelSaaS. All rights reserved. Developed by ",
+      developer: "Martin Yovchev",
+    },
+  },
 }
 
 export type Translations = typeof en
